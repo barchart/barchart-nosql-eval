@@ -1,0 +1,11 @@
+
+#
+# internal address where agent runs http server for the center 
+#
+agent_rpc_interface: 10.222.10.171
+
+#
+# external address where center contacts the agent
+#
+agent_rpc_broadcast_address: 8.18.161.171
+
