@@ -1,17 +1,301 @@
 #!/bin/bash
 
-#
-# 
-#
-LIB_AGENT="/var/lib/opscenter-agent/"
-AGENT_CONF="$LIB_AGENT/conf"
-AGENT_ADDR="$AGENT_CONF/address.yaml"
-
-#
-#
-#
+# ops center 
 ETC_OPSC="/etc/opscenter"
 OPSC_CONF="$ETC_OPSC/opscenterd.conf"
 OPSC_CLUSTERS="$ETC_OPSC/clusters"
 
+# ops agent
+LIB_AGENT="/var/lib/opscenter-agent/"
+AGENT_CONF="$LIB_AGENT/conf"
+AGENT_ADDR="$AGENT_CONF/address.yaml"
 
+# ops shared
+USR_OPSC="/usr/share/opscenter"
+
+# ops agent shared
+# http://www.datastax.com/docs/opscenter/agent/agent_manual#prerequisites
+USR_AGENT="$USR_OPSC/agent"
+AGENT_INSTALL="$USR_AGENT/bin/install_agent.sh"
+AGENT_PACK_DEB="$USR_AGENT/opscenter-agent.deb"
+AGENT_PACK_RPM="$USR_AGENT/opscenter-agent.rpm"
+
+#
+ETC_CASS="/etc/dse/cassandra"
+CASS_MAIN="$ETC_CASS/cassandra.yaml"
+
+# cassandra member nodes
+NODE_LIST=( \
+	cassandra-01.eqx.barchart.com \
+	cassandra-01.us-east-1.aws.barchart.com \
+	cassandra-01.us-west-1.aws.barchart.com \
+	cassandra-02.eqx.barchart.com \
+	cassandra-02.us-east-1.aws.barchart.com \
+	cassandra-02.us-west-1.aws.barchart.com \
+)
+
+# data-stax operations center node
+NODE_OPSC="opsc.cassandra.aws.barchart.com"
+
+# list of resources to delte after uninstall
+KILL_LIST=(
+)
+
+# detect if remote is running redhat
+function match_redhat {
+	local node="$1"
+	ssh $node "uname -a | grep '.el6.'"
+}
+
+# detect if remote is running ubuntu
+function match_ubuntu {
+	local node="$1"
+	ssh $node "uname -a | grep 'buntu'"
+}
+
+# overwrite node config
+function node_upload {
+	
+	local node="$1"
+	
+	local path="node/$node"
+
+	scp -r $path/etc $node:/tmp
+	scp -r $path/var $node:/tmp
+	
+	if [[ "$(match_redhat $node)" != "" ]] ; then
+		ssh $node "cp -r -f /tmp/etc /"
+		ssh $node "cp -r -f /tmp/var /"
+		return
+	fi
+	
+	if [[ "$(match_ubuntu $node)" != "" ]] ; then
+		ssh $node "sudo cp -r -f /tmp/etc /"
+		ssh $node "sudo cp -r -f /tmp/var /"
+		return
+	fi
+	
+	echo "### OS=INVALID"
+	exit -1
+
+}
+
+# disable ubuntu apt-get prompts
+DPKG_OPTS="-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
+
+# install dse				
+function node_create {
+
+	local node="$1"
+
+	node_upload $node
+	
+	if [[ "$(match_redhat $node)" != "" ]] ; then
+		
+		echo "### OS=REDHAT"
+
+		echo "### stop dse"
+		ssh $node "service dse stop"
+						
+		echo "### http://www.datastax.com/docs/datastax_enterprise3.0/install/install_rpm_pkg"
+		ssh $node "yum -y install dse-full"
+		
+		echo "### http://www.datastax.com/docs/opscenter/install/install_rhel"
+		ssh $node "yum -y install opscenter"
+
+		echo "### enable dse"
+		ssh $node "chkconfig dse on"
+						
+		echo "### disable opsc"
+		ssh $node "chkconfig opscenterd off"
+		
+		echo "### start dse"
+		ssh $node "service dse start"
+				
+		return
+		
+	fi
+
+	if [[ "$(match_ubuntu $node)" != "" ]] ; then
+		
+		echo "### OS=UBUNTU"
+
+		echo "### apt-get dialog"
+		ssh $node "sudo apt-get -y install dialog"
+
+		echo "### stop dse"
+		ssh $node "sudo service dse stop"
+
+		echo "### get key"
+		ssh $node "curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add -"
+		ssh $node "sudo apt-get update"
+						
+		echo "### http://www.datastax.com/docs/datastax_enterprise3.0/install/install_deb_pkg"
+		ssh $node "sudo apt-get -y install dse-full $DPKG_OPTS"
+			
+		echo "### http://www.datastax.com/docs/opscenter/install/install_deb"
+		ssh $node "sudo apt-get -y install libssl0.9.8 opscenter $DPKG_OPTS"
+
+		echo "### enable dse"
+		ssh $node "sudo update-rc.d dse enable"
+												
+		echo "### disable opsc"
+		ssh $node "sudo update-rc.d opscenterd disable"
+
+		echo "### start dse"
+		ssh $node "sudo service dse start"
+
+		return
+		
+	fi
+
+	echo "### OS=INVALID"
+	exit -1
+			
+}
+
+# remove dse				
+function node_delete {
+
+	local node="$1"
+
+	if [[ "$(match_redhat $node)" != "" ]] ; then
+		
+		echo "### OS=REDHAT"
+		
+		ssh $node "yum -y remove opscenter dse-full"
+
+		ssh $node "rm -rf /etc/dse"
+		ssh $node "rm -rf /var/lib/cassandra"
+		ssh $node "rm -rf /var/lib/opscenter"
+		ssh $node "rm -rf /var/lib/opscenter-agent"
+						
+		return
+		
+	fi
+
+	if [[ "$(match_ubuntu $node)" != "" ]] ; then
+		
+		echo "### OS=UBUNTU"
+
+		ssh $node "sudo apt-get -y remove dse-full dse dse-lib*"
+		ssh $node "sudo apt-get -y remove opscenter"
+		ssh $node "sudo apt-get -y autoremove"
+																								
+		ssh $node "sudo rm -rf /etc/dse"
+		ssh $node "sudo rm -rf /var/lib/cassandra"
+		ssh $node "sudo rm -rf /var/lib/opscenter"
+		ssh $node "sudo rm -rf /var/lib/opscenter-agent"
+		
+		return
+		
+	fi
+
+	echo "### OS=INVALID"
+	exit -1
+			
+
+}
+
+# install operations center
+function opsc_create {
+
+	local node="opsc.cassandra.aws.barchart.com"
+
+	node_upload $node
+	
+	if [[ "$(match_redhat $node)" != "" ]] ; then
+		
+		echo "### OS=REDHAT"
+
+		ssh $node "service opscenterd stop"
+						
+		ssh $node "yum -y install opscenter"
+		
+		ssh $node "service opscenterd start"
+				
+		return
+		
+	fi
+
+	if [[ "$(match_ubuntu $node)" != "" ]] ; then
+		
+		echo "### OS=UBUNTU"
+
+		ssh $node "sudo service opscenterd stop"
+
+		ssh $node "curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add -"
+		ssh $node "sudo apt-get update"
+		ssh $node "sudo apt-get -y install libssl0.9.8 opscenter -o Dpkg::Options::=--force-confold"
+
+		ssh $node "sudo service opscenterd start"
+
+		return
+		
+	fi
+
+	echo "### OS=INVALID"
+	exit -1
+			
+}
+
+
+# remove operations center				
+function opsc_delete {
+
+	local node="opsc.cassandra.aws.barchart.com"
+
+	if [[ "$(match_redhat $node)" != "" ]] ; then
+		
+		echo "### OS=REDHAT"
+		
+		ssh $node "yum -y remove opscenter"
+
+		ssh $node "rm -rf /etc/opscenter"
+		ssh $node "rm -rf /var/lib/opscenter"
+						
+		return
+		
+	fi
+
+	if [[ "$(match_ubuntu $node)" != "" ]] ; then
+		
+		echo "### OS=UBUNTU"
+
+		ssh $node "sudo apt-get -y remove opscenter"
+												
+		ssh $node "sudo rm -rf /etc/opscenter"
+		ssh $node "sudo rm -rf /var/lib/opscenter"
+		
+		return
+		
+	fi
+
+	echo "### OS=INVALID"
+	exit -1
+
+}
+
+
+function node_create_all {
+	
+	for NODE in "${NODE_LIST[@]}"
+	do
+		echo "### CREATE: $NODE "
+		node_create $NODE
+	done
+	
+	opsc_create
+}
+
+function node_delete_all {
+
+	opsc_delete
+			
+	for NODE in "${NODE_LIST[@]}"
+	do
+		echo "### DELETE: $NODE "
+		node_delete $NODE
+	done
+	
+}

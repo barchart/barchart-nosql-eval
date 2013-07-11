@@ -34,7 +34,7 @@ num_tokens: 256
 # the heaviest-loaded existing node.  If there is no load information
 # available, such as is the case with a new cluster, it will pick
 # a random token, which will lead to hot spots.
-# initial_token:
+initial_token:
 
 # See http://wiki.apache.org/cassandra/HintedHandoff
 hinted_handoff_enabled: true
@@ -268,13 +268,7 @@ seed_provider:
       parameters:
           # seeds is actually a comma-delimited list of addresses.
           # Ex: "<ip1>,<ip2>,<ip3>"
-          - seeds: 
-                cassandra-01.eqx.barchart.com ,
-                cassandra-01.us-east-1.aws.barchart.com ,
-                cassandra-01.us-west-1.aws.barchart.com ,
-                cassandra-02.eqx.barchart.com ,
-                cassandra-02.us-east-1.aws.barchart.com ,
-                cassandra-02.us-west-1.aws.barchart.com ,
+          - seeds: ","
 
 # emergency pressure valve: each time heap usage after a full (CMS)
 # garbage collection is above this fraction of the max, Cassandra will
@@ -365,11 +359,11 @@ ssl_storage_port: 7001
 # address associated with the hostname (it might not be).
 #
 # Setting this to 0.0.0.0 is always wrong.
-listen_address: 0.0.0.0
+listen_address: localhost
 
 # Address to broadcast to other Cassandra nodes
 # Leaving this blank will set it to the same value as listen_address
-broadcast_address: cassandra-01.eqx.barchart.com
+# broadcast_address: 1.2.3.4
 
 # Internode authentication backend, implementing IInternodeAuthenticator;
 # used to allow/disallow connections from peer nodes.
@@ -396,7 +390,7 @@ start_rpc: true
 # 
 # Leaving this blank has the same effect it does for ListenAddress,
 # (i.e. it will be based on the configured hostname of the node).
-rpc_address: 0.0.0.0
+rpc_address: localhost
 # port for Thrift to listen for clients on
 rpc_port: 9160
 
@@ -615,7 +609,7 @@ cross_node_timeout: false
 # NOTE: To choose a different snitch, please change the delegated_snitch
 #       option in the dse.yaml file. For DSE installations do NOT change
 #       the endpoint_snitch setting here directly.
-endpoint_snitch: PropertyFileSnitch
+endpoint_snitch: com.datastax.bdp.snitch.DseDelegateSnitch
 
 # controls how often to perform the more expensive part of host score
 # calculation

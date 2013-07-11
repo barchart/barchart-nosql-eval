@@ -1,0 +1,11 @@
+
+#
+# http://www.datastax.com/docs/datastax_enterprise3.0/install/install_rpm_pkg
+#
+
+[datastax]
+name= DataStax Repo for Apache Cassandra
+baseurl=http://Andrei.Pozolotin_barchart.com:m14IP0aKyx4SVn1@rpm.datastax.com/enterprise
+enabled=1
+gpgcheck=0
+
