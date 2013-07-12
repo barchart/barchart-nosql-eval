@@ -1,26 +1,26 @@
 #!/bin/bash
 
-# ops center 
+# ops center config 
 ETC_OPSC="/etc/opscenter"
 OPSC_CONF="$ETC_OPSC/opscenterd.conf"
 OPSC_CLUSTERS="$ETC_OPSC/clusters"
 
-# ops agent
+# ops agent config
 LIB_AGENT="/var/lib/opscenter-agent/"
 AGENT_CONF="$LIB_AGENT/conf"
 AGENT_ADDR="$AGENT_CONF/address.yaml"
 
-# ops shared
+# ops shared resources
 USR_OPSC="/usr/share/opscenter"
 
-# ops agent shared
+# ops agent shared resources
 # http://www.datastax.com/docs/opscenter/agent/agent_manual#prerequisites
 USR_AGENT="$USR_OPSC/agent"
 AGENT_INSTALL="$USR_AGENT/bin/install_agent.sh"
 AGENT_PACK_DEB="$USR_AGENT/opscenter-agent.deb"
 AGENT_PACK_RPM="$USR_AGENT/opscenter-agent.rpm"
 
-#
+# cassandra config
 ETC_CASS="/etc/dse/cassandra"
 CASS_MAIN="$ETC_CASS/cassandra.yaml"
 
@@ -39,6 +39,7 @@ NODE_OPSC="opsc.cassandra.aws.barchart.com"
 
 # list of resources to delte after uninstall
 KILL_LIST=(
+	TODO
 )
 
 # detect if remote is running redhat
@@ -53,7 +54,7 @@ function match_ubuntu {
 	ssh $node "uname -a | grep 'buntu'"
 }
 
-# overwrite node config
+# upload node config
 function node_upload {
 	
 	local node="$1"
@@ -80,10 +81,10 @@ function node_upload {
 
 }
 
-# disable ubuntu apt-get prompts
+# disable ubuntu apt-get prompts; need "dialog" package installed
 DPKG_OPTS="-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 
-# install dse				
+# install dse services				
 function node_create {
 
 	local node="$1"
@@ -94,9 +95,6 @@ function node_create {
 		
 		echo "### OS=REDHAT"
 
-		echo "### stop dse"
-		ssh $node "service dse stop"
-						
 		echo "### http://www.datastax.com/docs/datastax_enterprise3.0/install/install_rpm_pkg"
 		ssh $node "yum -y install dse-full"
 		
@@ -109,9 +107,15 @@ function node_create {
 		echo "### disable opsc"
 		ssh $node "chkconfig opscenterd off"
 		
-		echo "### start dse"
-		ssh $node "service dse start"
-				
+		echo "### restart dse"
+		ssh $node "service dse restart"
+
+		echo "### install agent"
+		ssh $node "$AGENT_INSTALL $AGENT_PACK_RPM $NODE_OPSC"
+
+		echo "### restart agent"
+		ssh $node "service opscenter-agent restart"
+																																																																																																																																
 		return
 		
 	fi
@@ -120,13 +124,10 @@ function node_create {
 		
 		echo "### OS=UBUNTU"
 
-		echo "### apt-get dialog"
+		echo "### dpkg dialog"
 		ssh $node "sudo apt-get -y install dialog"
 
-		echo "### stop dse"
-		ssh $node "sudo service dse stop"
-
-		echo "### get key"
+		echo "### gpg key"
 		ssh $node "curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add -"
 		ssh $node "sudo apt-get update"
 						
@@ -142,9 +143,15 @@ function node_create {
 		echo "### disable opsc"
 		ssh $node "sudo update-rc.d opscenterd disable"
 
-		echo "### start dse"
-		ssh $node "sudo service dse start"
+		echo "### restart dse"
+		ssh $node "sudo service dse restart"
 
+		echo "### install agent"
+		ssh $node "sudo $AGENT_INSTALL $AGENT_PACK_DEB $NODE_OPSC"
+		
+		echo "### restart agent"
+		ssh $node "sudo service opscenter-agent restart"
+		
 		return
 		
 	fi
@@ -162,9 +169,11 @@ function node_delete {
 	if [[ "$(match_redhat $node)" != "" ]] ; then
 		
 		echo "### OS=REDHAT"
-		
-		ssh $node "yum -y remove opscenter dse-full"
 
+		echo "### remove packages"		
+		ssh $node "yum -y remove opscenter dse-full dse dse-lib*"
+
+		echo "### remove resources"		
 		ssh $node "rm -rf /etc/dse"
 		ssh $node "rm -rf /var/lib/cassandra"
 		ssh $node "rm -rf /var/lib/opscenter"
@@ -178,10 +187,12 @@ function node_delete {
 		
 		echo "### OS=UBUNTU"
 
+		echo "### remove packages"		
 		ssh $node "sudo apt-get -y remove dse-full dse dse-lib*"
 		ssh $node "sudo apt-get -y remove opscenter"
 		ssh $node "sudo apt-get -y autoremove"
 																								
+		echo "### remove resources"		
 		ssh $node "sudo rm -rf /etc/dse"
 		ssh $node "sudo rm -rf /var/lib/cassandra"
 		ssh $node "sudo rm -rf /var/lib/opscenter"
@@ -200,7 +211,7 @@ function node_delete {
 # install operations center
 function opsc_create {
 
-	local node="opsc.cassandra.aws.barchart.com"
+	local node="$NODE_OPSC"
 
 	node_upload $node
 	
@@ -208,11 +219,11 @@ function opsc_create {
 		
 		echo "### OS=REDHAT"
 
-		ssh $node "service opscenterd stop"
-						
+		echo "### install ops center"
 		ssh $node "yum -y install opscenter"
 		
-		ssh $node "service opscenterd start"
+		echo "### restart ops center"
+		ssh $node "service opscenterd restart"
 				
 		return
 		
@@ -222,13 +233,18 @@ function opsc_create {
 		
 		echo "### OS=UBUNTU"
 
-		ssh $node "sudo service opscenterd stop"
+		echo "### dpkg dialog"
+		ssh $node "sudo apt-get -y install dialog"
 
+		echo "### gpg key"
 		ssh $node "curl -L https://debian.datastax.com/debian/repo_key | sudo apt-key add -"
 		ssh $node "sudo apt-get update"
-		ssh $node "sudo apt-get -y install libssl0.9.8 opscenter -o Dpkg::Options::=--force-confold"
 
-		ssh $node "sudo service opscenterd start"
+		echo "### install ops center"
+		ssh $node "sudo apt-get -y install libssl0.9.8 opscenter $DPKG_OPTS"
+
+		echo "### restart ops center"
+		ssh $node "sudo service opscenterd restart"
 
 		return
 		
@@ -243,7 +259,7 @@ function opsc_create {
 # remove operations center				
 function opsc_delete {
 
-	local node="opsc.cassandra.aws.barchart.com"
+	local node="$NODE_OPSC"
 
 	if [[ "$(match_redhat $node)" != "" ]] ; then
 		

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# single node create testing
+#
+
 source common.sh
 
 #node_create "cassandra-01.eqx.barchart.com"
