@@ -2,10 +2,20 @@
 #
 # internal address where agent runs http server for the center 
 #
-agent_rpc_interface: 10.222.10.171
+agent_rpc_interface: 0.0.0.0
 
 #
-# external address where center contacts the agent
+# external address where center contacts the agent http server
 #
-agent_rpc_broadcast_address: 8.18.161.171
+agent_rpc_broadcast_address: cassandra-01.us-east-1.aws.barchart.com
+
+#
+# disable ssl
+#
+use_ssl: 0
+
+#
+# external address of the center server
+#
+stomp_interface: "opsc.cassandra.aws.barchart.com"
 
