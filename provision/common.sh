@@ -170,6 +170,12 @@ function node_delete {
 		
 		echo "### OS=REDHAT"
 
+		echo "### stop dse"
+		ssh $node "service dse stop"
+
+		echo "### stop agent"
+		ssh $node "service opscenter-agent stop"
+
 		echo "### remove packages"		
 		ssh $node "yum -y remove opscenter dse-full dse dse-lib*"
 
@@ -186,6 +192,12 @@ function node_delete {
 	if [[ "$(match_ubuntu $node)" != "" ]] ; then
 		
 		echo "### OS=UBUNTU"
+
+		echo "### stop dse"
+		ssh $node "sudo service dse stop"
+
+		echo "### stop agent"
+		ssh $node "sudo service opscenter-agent stop"
 
 		echo "### remove packages"		
 		ssh $node "sudo apt-get -y remove dse-full dse dse-lib*"
@@ -265,6 +277,9 @@ function opsc_delete {
 		
 		echo "### OS=REDHAT"
 		
+		echo "### stop ops center"
+		ssh $node "service opscenterd stop"
+				
 		echo "### remove ops center"
 		ssh $node "yum -y remove opscenter"
 
@@ -280,6 +295,9 @@ function opsc_delete {
 		
 		echo "### OS=UBUNTU"
 
+		echo "### stop ops center"
+		ssh $node "sudo service opscenterd stop"
+		
 		echo "### remove ops center"
 		ssh $node "sudo apt-get -y remove opscenter"
 												
