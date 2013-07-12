@@ -265,8 +265,10 @@ function opsc_delete {
 		
 		echo "### OS=REDHAT"
 		
+		echo "### remove ops center"
 		ssh $node "yum -y remove opscenter"
 
+		echo "### remove ops resources"
 		ssh $node "rm -rf /etc/opscenter"
 		ssh $node "rm -rf /var/lib/opscenter"
 						
@@ -278,8 +280,10 @@ function opsc_delete {
 		
 		echo "### OS=UBUNTU"
 
+		echo "### remove ops center"
 		ssh $node "sudo apt-get -y remove opscenter"
 												
+		echo "### remove ops resources"
 		ssh $node "sudo rm -rf /etc/opscenter"
 		ssh $node "sudo rm -rf /var/lib/opscenter"
 		
