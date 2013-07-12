@@ -200,8 +200,8 @@ function node_delete {
 		ssh $node "sudo service opscenter-agent stop"
 
 		echo "### remove packages"		
-		ssh $node "sudo apt-get -y remove dse-full dse dse-lib*"
-		ssh $node "sudo apt-get -y remove opscenter"
+		ssh $node "sudo apt-get -y purge dse-full dse dse-lib*"
+		ssh $node "sudo apt-get -y purge opscenter"
 		ssh $node "sudo apt-get -y autoremove"
 																								
 		echo "### remove resources"		
@@ -299,7 +299,7 @@ function opsc_delete {
 		ssh $node "sudo service opscenterd stop"
 		
 		echo "### remove ops center"
-		ssh $node "sudo apt-get -y remove opscenter"
+		ssh $node "sudo apt-get -y purge opscenter"
 												
 		echo "### remove ops resources"
 		ssh $node "sudo rm -rf /etc/opscenter"
