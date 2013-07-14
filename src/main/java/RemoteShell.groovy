@@ -112,12 +112,17 @@ class RemoteShell {
 		ssh(host, type.delete(name))
 	}
 
-	static packageInstall(host, name){
+	static packageCreate(host, name){
+		def type = hostType(host);
+		ssh(host, type.create(name))
+	}
+
+	static packageEnsure(host, name){
 		def type = hostType(host);
 		ssh(host, type.ensure(name))
 	}
 
-	static packageRemove(host, name){
+	static packageDelete(host, name){
 		def type = hostType(host);
 		ssh(host, type.delete(name))
 	}

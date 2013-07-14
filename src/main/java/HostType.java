@@ -25,7 +25,8 @@ public enum HostType {
 		@Override
 		public String delete(final String name) {
 			return "sudo DEBIAN_FRONTEND=noninteractive apt-get -y purge "
-					+ name;
+					+ name
+					+ " ; sudo DEBIAN_FRONTEND=noninteractive apt-get -y autoremove";
 		}
 	}, //
 

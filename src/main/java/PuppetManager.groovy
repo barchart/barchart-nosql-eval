@@ -12,7 +12,7 @@ class PuppetManager {
 
 		RemoteShell.ensureHostName(host)
 
-		RemoteShell.packageInstall(host, "mc zip unzip git")
+		RemoteShell.packageCreate(host, "mc zip unzip git")
 
 		RemoteShell.puppetInstall(host, "puppet")
 
@@ -54,7 +54,7 @@ class PuppetManager {
 	 */
 	static setupSignature(nodeMaster, nodeAgent){
 		RemoteShell.ssh(nodeMaster.host, "sudo puppet cert --list")
-		RemoteShell.ssh(nodeMaster.host, "sudo puppet cert --sign " + nodeAgent.host)
+		RemoteShell.ssh(nodeMaster.host, "sudo puppet cert --sign" + " " + nodeAgent.host)
 	}
 
 	static final REPO_SOURCE = "https://github.com/barchart/barchart-nosql-eval.git"
@@ -100,22 +100,26 @@ class PuppetManager {
 		/** Setup repo cron job. */
 		def local = "./src/main/resources/puppet.cron"
 		def remote = "/etc/cron.d/puppet.cron"
-		RemoteShell.scpInto(host, target, remote);
+		RemoteShell.scpInto(host, local, remote);
 	}
 
 	static removeAgent(nodeMaster, nodeAgent){
-		RemoteShell.puppetRemove(nodeAgent.host, "puppet")
+		println Amazon.json(nodeMaster)
+		def host = nodeAgent.host
+		RemoteShell.puppetRemove(host, "puppet")
+		//		RemoteShell.ssh(host, "sudo rm -rf /etc/puppet")
+		RemoteShell.ssh(host, "sudo rm -rf /var/lib/puppet")
 	}
 
 	static removeMaster(nodeMaster){
+		println Amazon.json(nodeMaster)
+		def host = nodeMaster.host
 		removeAgent(nodeMaster, nodeMaster);
-		RemoteShell.puppetRemove(nodeMaster.host, "puppetmaster")
+		RemoteShell.puppetRemove(host, "puppetmaster")
 	}
 
 	static removeRepository(nodeMaster){
-
 		println Amazon.json(nodeMaster)
-
 		def host = nodeMaster.host
 
 		/** Local clone repository.*/
