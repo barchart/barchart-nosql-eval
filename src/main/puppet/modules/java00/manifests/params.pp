@@ -14,6 +14,9 @@ class java00::params {
     'i386': {
       $java = "${java32}"
     }
+    'amd64': {
+      $java = "${java64}"
+    }
     'x86_64': {
       $java = "${java64}"
     }
