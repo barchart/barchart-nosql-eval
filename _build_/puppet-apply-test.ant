@@ -1,0 +1,42 @@
+<!--
+
+    Copyright (C) 2011-2013 Barchart, Inc. <http://www.barchart.com/>
+
+    All rights reserved. Licensed under the OSI BSD License.
+
+    http://www.opensource.org/licenses/bsd-license.php
+
+-->
+<project default="puppet" basedir="./..">
+
+	<echo message="basedir : ${basedir}" />
+
+	<target name="puppet">
+
+		<condition property="executable" value="sudo">
+			<os family="unix" />
+		</condition>
+		<condition property="executable" value="XXXX">
+			<os family="windows" />
+		</condition>
+
+		<mkdir dir="${user.home}/.puppet" />
+
+		<exec executable="${executable}">
+
+			<arg value="puppet" />
+			<arg value="apply" />
+
+			<arg value="--debug" />
+			<arg value="--verbose" />
+			<arg value="--ignorecache" />
+
+			<arg value="--confdir=${basedir}/src/main/puppet" />
+
+			<arg value="${basedir}/src/main/puppet/manifests/test.pp" />
+
+		</exec>
+
+	</target>
+
+</project>

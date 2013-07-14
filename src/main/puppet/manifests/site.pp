@@ -1,4 +1,9 @@
 
-include helloworld
 
-include ntp
+node default {
+
+  include ntp
+  include java00
+  
+}
+
