@@ -1,0 +1,72 @@
+{
+	
+    "AWSTemplateFormatVersion": "2010-09-09",
+    
+    "Description": "DataStax instance.",
+    
+    "Parameters": {
+
+        "ParamKeyName" : {
+            "Type" : "String",
+            "Default" : "barchart-karaf",
+            "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances"
+        },
+        
+        "ParamInstanceType" : { 
+            "Type" : "String", 
+            "Default" : "m1.large",
+            "Description" : "EC2 cpu/memory instance size selector"
+        },
+        
+        "ParamInstanceEIP": {
+            "Type": "String",
+            "Default" : "10.10.10.10",
+            "Description": "Existing permanent EIP"
+        },
+        
+        "ParamZoneName": {
+            "Type": "String",
+            "Default" : "aws.barchart.com.",
+            "Description": "Route 53 zone name which will contain the instance"
+        },
+        
+        "ParamHostName": {
+            "Type": "String",
+            "Default" : "datastax-image.aws.barchart.com.",
+            "Description": "Route 53 host name which will be assigned to the instance"
+        }
+        
+    },
+    
+    "Mappings": {
+    	
+        "RegionImageMap": {
+            "ap-northeast-1": { "AMI": "ami-51129850" },
+            "ap-southeast-1": { "AMI": "ami-a02f66f2" },
+            "ap-southeast-2": { "AMI": "ami-974ddead" },
+            "eu-west-1":      { "AMI": "ami-89b1a3fd" },
+            "sa-east-1":      { "AMI": "ami-5c7edb41" },
+            "us-east-1":      { "AMI": "ami-23d9a94a" },
+            "us-west-1":      { "AMI": "ami-c4072e81" },
+            "us-west-2":      { "AMI": "ami-fb68f8cb" }
+        }
+    
+    },
+    
+    "Resources": {
+    	
+    	"DataStaxSecurityGroup" : {
+		   "Type" : "AWS::EC2::SecurityGroup",
+		   "Properties" : {
+		      "GroupDescription" : "Cassandra Database",
+		      "SecurityGroupIngress" : [ ],
+		      "SecurityGroupEgress"  : [ ]
+		   }
+    	}
+    },
+    
+    "Outputs": {
+    	
+    }
+    
+}
