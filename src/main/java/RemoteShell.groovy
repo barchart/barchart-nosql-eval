@@ -68,12 +68,14 @@ class RemoteShell {
 	 * http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html#for-debian-and-ubuntu
 	 */
 	static puppetLabsRepoRedhat(host){
-		def labs = "http://yum.puppetlabs.com/el/6/products/i386/"
+		//		def labs = "http://yum.puppetlabs.com/el/6/products/i386/"
+		def labs = "http://yum.puppetlabs.com/el/6/products/x86_64/"
 		def file = "puppetlabs-release-6-7.noarch.rpm"
 		if(exists(host, file)) {
 			return
 		}
-		ssh(host, "sudo rpm -ivh " + labs + "/" + file)
+		ssh(host, "sudo wget " + labs + "/" + file)
+		ssh(host, "sudo rpm -i " + file)
 	}
 
 	/**
@@ -87,7 +89,7 @@ class RemoteShell {
 		if(exists(host, file)) {
 			return
 		}
-		ssh(host, "wget " + labs + "/" + file)
+		ssh(host, "sudo wget " + labs + "/" + file)
 		ssh(host, "sudo dpkg -i " + file)
 		ssh(host, "sudo apt-get update")
 	}
@@ -128,14 +130,15 @@ class RemoteShell {
 	}
 
 	static serviceRestart(host, name){
-		ssh(host, "sudo service ${name} restart", "-n -f")
+		//		ssh(host, "sudo service ${name} restart", "-n -f")
+		ssh(host, "sudo screen -d -m service ${name} restart")
 	}
 
 	static ensureHostName(host){
 		def type = hostType(host);
 		switch(type){
 			case HostType.REDHAT:
-				ssh(host, "TODO")
+				ssh(host, "ENSURE MANUAL SETUP")
 				return;
 			case HostType.UBUNTU:
 				ssh(host, "sudo hostname ${host}")

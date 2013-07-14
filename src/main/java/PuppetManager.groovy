@@ -10,7 +10,7 @@ class PuppetManager {
 
 		RemoteShell.ensureHostName(agent.host)
 
-		RemoteShell.packageCreate(agent.host, "mc zip unzip")
+		RemoteShell.packageCreate(agent.host, "mc zip unzip screen")
 
 		RemoteShell.puppetInstall(agent.host, "puppet")
 
@@ -28,7 +28,7 @@ class PuppetManager {
 		/** Ensure active service. */
 		RemoteShell.serviceRestart(agent.host, "puppet")
 
-		Thread.sleep(3 * 1000)
+		Thread.sleep(5 * 1000)
 
 		/** Sign agent on master. */
 		RemoteShell.ssh(master.host, "sudo puppet cert --list")
@@ -40,13 +40,13 @@ class PuppetManager {
 	 */
 	static installMaster(master){
 
-		RemoteShell.packageCreate(master.host, "mc zip unzip git")
+		RemoteShell.packageCreate(master.host, "mc zip unzip screen git")
 
 		RemoteShell.puppetInstall(master.host, "puppetmaster")
 
 		RemoteShell.serviceRestart(master.host, "puppetmaster")
 
-		Thread.sleep(3 * 1000)
+		Thread.sleep(5 * 1000)
 	}
 
 	static final REPO_SOURCE = "https://github.com/barchart/barchart-nosql-eval.git"
