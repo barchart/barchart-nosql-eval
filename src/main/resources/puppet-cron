@@ -5,4 +5,4 @@
 # 
 # Pull remote git repository every minute.
 #
-* * * * * root /usr/bin/git pull /etc/puppet/conf-repo
+* * * * * root cd /etc/puppet/conf-repo; git pull
