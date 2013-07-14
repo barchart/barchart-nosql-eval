@@ -94,7 +94,7 @@ class PuppetManager {
 			"templates",
 		].each { folder ->
 			RemoteShell.ssh(host, "sudo rm -rf /etc/puppet/${folder}")
-			RemoteShell.ssh(host, "sudo ln -s  /etc/puppet/${folder} ${puppet}/${folder} ")
+			RemoteShell.ssh(host, "sudo ln -s ${puppet}/${folder} /etc/puppet/${folder}")
 		}
 
 		/** Setup repo cron job. */
