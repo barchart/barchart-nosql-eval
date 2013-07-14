@@ -1,14 +1,11 @@
 
 def master = HostList.ops;
 
-/** Puppet master. */
-
-/** Puppet agents on amazon. */
+/** Puppet agents. */
 (HostList.aws).each { agent ->
+	PuppetManager.removeAgent(master, agent)
 }
 
-return
-
-/** Puppet agents on equnix. */
-(HostList.eqx).each { agent ->
-}
+/** Puppet master. */
+PuppetManager.removeMaster(master)
+PuppetManager.removeRepository(master)

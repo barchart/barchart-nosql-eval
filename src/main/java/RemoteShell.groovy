@@ -59,7 +59,7 @@ class RemoteShell {
 	 * Detect if remote file is present.
 	 */
 	static boolean exists(host, file){
-		return ssh(host, "ls " + file).out.contains(file)
+		return !ssh(host, "ls " + file).out.isEmpty()
 	}
 
 	/**

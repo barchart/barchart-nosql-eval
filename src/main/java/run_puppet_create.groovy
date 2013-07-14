@@ -2,20 +2,12 @@
 def master = HostList.ops;
 
 /** Puppet master. */
-PuppetManager.setupMaster(master)
+PuppetManager.installMaster(master)
 PuppetManager.setupSignature(master, master);
-PuppetManager.configureRepo(master)
+PuppetManager.installRepository(master)
 
-/** Puppet agents on amazon. */
+/** Puppet agents. */
 (HostList.aws).each { agent ->
-	PuppetManager.setupAgent(master, agent)
-	PuppetManager.setupSignature(master, agent);
-}
-
-return
-
-/** Puppet agents on equnix. */
-(HostList.eqx).each { agent ->
-	PuppetManager.setupAgent(master, agent)
+	PuppetManager.installAgent(master, agent)
 	PuppetManager.setupSignature(master, agent);
 }
