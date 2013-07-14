@@ -2,12 +2,10 @@
 def master = HostList.ops;
 
 /** Puppet master. */
-PuppetManager.installMaster(master)
-PuppetManager.setupSignature(master, master);
 PuppetManager.installRepository(master)
+PuppetManager.installMaster(master)
 
 /** Puppet agents. */
-(HostList.aws).each { agent ->
+([master]+ HostList.aws).each { agent ->
 	PuppetManager.installAgent(master, agent)
-	PuppetManager.setupSignature(master, agent);
 }

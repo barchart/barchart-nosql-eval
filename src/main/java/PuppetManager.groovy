@@ -4,70 +4,60 @@ class PuppetManager {
 	/**
 	 * Setup agent bound to the master.
 	 */
-	static installAgent(nodeMaster, nodeAgent){
+	static installAgent(master, agent){
 
-		println Amazon.json(nodeAgent)
+		println Amazon.json(agent)
 
-		def host = nodeAgent.host
+		RemoteShell.ensureHostName(agent.host)
 
-		RemoteShell.ensureHostName(host)
+		RemoteShell.packageCreate(agent.host, "mc zip unzip")
 
-		RemoteShell.packageCreate(host, "mc zip unzip git")
+		RemoteShell.puppetInstall(agent.host, "puppet")
 
-		RemoteShell.puppetInstall(host, "puppet")
-
+		/** Copy agent configuration. */
 		def source = "./src/main/resources/puppet.conf"
 		def target = "./target/puppet.conf"
 		def remote = "/etc/puppet/puppet.conf"
 
 		def conf = new WiniConf(source)
-		conf.put("agent", "server", nodeMaster.host)
+		conf.put("agent", "server", master.host)
 		conf.store(target)
 
-		RemoteShell.scpInto(host, target, remote);
+		RemoteShell.scpInto(agent.host, target, remote);
 
-		RemoteShell.serviceRestart(host, "puppet")
+		/** Ensure active service. */
+		RemoteShell.serviceRestart(agent.host, "puppet")
 
 		Thread.sleep(3 * 1000)
+
+		/** Sign agent on master. */
+		RemoteShell.ssh(master.host, "sudo puppet cert --list")
+		RemoteShell.ssh(master.host, "sudo puppet cert --sign" + " " + agent.host )
 	}
 
 	/**
 	 * Setup master puppet.
 	 */
-	static installMaster(nodeMaster){
+	static installMaster(master){
 
-		installAgent(nodeMaster, nodeMaster)
+		RemoteShell.packageCreate(master.host, "mc zip unzip git")
 
-		def host = nodeMaster.host
+		RemoteShell.puppetInstall(master.host, "puppetmaster")
 
-		RemoteShell.puppetInstall(host, "puppetmaster")
-
-
-		RemoteShell.serviceRestart(host, "puppet")
-		RemoteShell.serviceRestart(host, "puppetmaster")
+		RemoteShell.serviceRestart(master.host, "puppetmaster")
 
 		Thread.sleep(3 * 1000)
 	}
 
-	/** 
-	 * Sign agent on master. 
-	 */
-	static setupSignature(nodeMaster, nodeAgent){
-		RemoteShell.ssh(nodeMaster.host, "sudo puppet cert --list")
-		RemoteShell.ssh(nodeMaster.host, "sudo puppet cert --sign" + " " + nodeAgent.host)
-	}
-
 	static final REPO_SOURCE = "https://github.com/barchart/barchart-nosql-eval.git"
-	static final REPO_TARGET = "/etc/puppet/repo"
+	static final REPO_TARGET = "/etc/puppet/conf-repo"
 
 	/**
-	 * Configure git repo.
+	 * Configure git repository, links, and sync.
 	 */
-	static installRepository(nodeMaster){
+	static installRepository(master){
 
-		println Amazon.json(nodeMaster)
-
-		def host = nodeMaster.host
+		println Amazon.json(master)
 
 		/** Remote repository. */
 		def source = REPO_SOURCE
@@ -79,13 +69,13 @@ class PuppetManager {
 		def puppet = "${target}/src/main/puppet"
 
 		/** Verify previous setup. */
-		if(RemoteShell.exists(host, target)){
+		if(RemoteShell.exists(master.host, target)){
 			return
 		}
 
 		/** Ensure original clone. */
-		RemoteShell.ssh(host, "sudo mkdir ${target}")
-		RemoteShell.ssh(host, "sudo git clone ${source} ${target}")
+		RemoteShell.ssh(master.host, "sudo mkdir ${target}")
+		RemoteShell.ssh(master.host, "sudo git clone ${source} ${target}")
 
 		/** Link puppet resources to the clone. */
 		[
@@ -93,41 +83,38 @@ class PuppetManager {
 			"modules",
 			"templates",
 		].each { folder ->
-			RemoteShell.ssh(host, "sudo rm -rf /etc/puppet/${folder}")
-			RemoteShell.ssh(host, "sudo ln -s ${puppet}/${folder} /etc/puppet/${folder}")
+			RemoteShell.ssh(master.host, "sudo rm -rf /etc/puppet/${folder}")
+			RemoteShell.ssh(master.host, "sudo ln -s ${puppet}/${folder} /etc/puppet/${folder}")
 		}
 
 		/** Setup repo cron job. */
 		def local = "./src/main/resources/puppet.cron"
 		def remote = "/etc/cron.d/puppet.cron"
-		RemoteShell.scpInto(host, local, remote);
+		RemoteShell.scpInto(master.host, local, remote);
 	}
 
-	static removeAgent(nodeMaster, nodeAgent){
-		println Amazon.json(nodeMaster)
-		def host = nodeAgent.host
-		RemoteShell.puppetRemove(host, "puppet")
-		//		RemoteShell.ssh(host, "sudo rm -rf /etc/puppet")
-		RemoteShell.ssh(host, "sudo rm -rf /var/lib/puppet")
+	static removeAgent(master, agent){
+		println Amazon.json(agent)
+		RemoteShell.puppetRemove(agent.host, "puppet")
+		RemoteShell.ssh(agent.host, "sudo rm -rf /var/lib/puppet")
 	}
 
-	static removeMaster(nodeMaster){
-		println Amazon.json(nodeMaster)
-		def host = nodeMaster.host
-		removeAgent(nodeMaster, nodeMaster);
-		RemoteShell.puppetRemove(host, "puppetmaster")
+	static removeMaster(master){
+		println Amazon.json(master)
+		RemoteShell.puppetRemove(master.host, "puppetmaster")
+		RemoteShell.ssh(master.host, "sudo rm -rf /var/lib/puppet")
 	}
 
-	static removeRepository(nodeMaster){
-		println Amazon.json(nodeMaster)
-		def host = nodeMaster.host
+	static removeRepository(master){
+
+		println Amazon.json(master)
 
 		/** Local clone repository.*/
 		def target = REPO_TARGET
 
 		/** Verify previous setup. */
-		if(RemoteShell.exists(host, target)){
-			RemoteShell.ssh(host, "sudo rm -rf ${target}")
+		if(RemoteShell.exists(master.host, target)){
+			RemoteShell.ssh(master.host, "sudo rm -rf ${target}")
 		}
 	}
 }

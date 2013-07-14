@@ -2,7 +2,7 @@
 def master = HostList.ops;
 
 /** Puppet agents. */
-(HostList.aws).each { agent ->
+([master]+ HostList.aws).each { agent ->
 	PuppetManager.removeAgent(master, agent)
 }
 
