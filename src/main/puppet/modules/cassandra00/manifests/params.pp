@@ -140,7 +140,8 @@ class cassandra00::params {
     }
     
     $rpc_address = $::cassandra_rpc_address ? {
-        undef   => $fqdn, # from facter
+        undef   => '0.0.0.0',
+#       undef   => $fqdn, # from facter
         default => $::cassandra_rpc_address,
     }
 
