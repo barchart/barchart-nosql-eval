@@ -9,9 +9,32 @@ class cassandra00::opsc::master  (
   $jmx_port = $params::jmx_port, 
   $rpc_port = $params::rpc_port, 
   $seeds    = $params::seeds, 
-      
+
+  $include_repo               = $params::include_repo,
+  $repo_name                  = $params::repo_name,
+  $repo_baseurl               = $params::repo_baseurl,
+  $repo_gpgkey                = $params::repo_gpgkey,
+  $repo_repos                 = $params::repo_repos,
+  $repo_release               = $params::repo_release,
+  $repo_pin                   = $params::repo_pin,
+  $repo_gpgcheck              = $params::repo_gpgcheck,
+  $repo_enabled               = $params::repo_enabled,
+        
   ) inherits params {
 
+    if($include_repo) {
+        class { 'repo':
+            repo_name => $repo_name,
+            baseurl   => $repo_baseurl,
+            gpgkey    => $repo_gpgkey,
+            repos     => $repo_repos,
+            release   => $repo_release,
+            pin       => $repo_pin,
+            gpgcheck  => $repo_gpgcheck,
+            enabled   => $repo_enabled,
+        }
+    }
+    
     include packages
 
     # Enable master service.    
