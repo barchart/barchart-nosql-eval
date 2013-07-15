@@ -88,9 +88,10 @@ class cassandra00 (
         fail('listen_address must be an IP address')
     }
 
-    if(!is_ip_address($rpc_address)) {
-        fail('rpc_address must be an IP address')
-    }
+# TODO
+#    if(!is_ip_address($rpc_address)) {
+#        fail('rpc_address must be an IP address')
+#    }
 
     if(!is_integer($rpc_port)) {
         fail('rpc_port must be a port number between 1 and 65535')
