@@ -4,8 +4,8 @@
 class cassandra00::install (
 
     $package_name = $params::package_name,
-    $config_path = $params::config_path
-    $topology_properties = $params::topology_properties
+    $config_path = $params::config_path,
+    $topology_properties = $params::topology_properties,
     
   ) {
 
