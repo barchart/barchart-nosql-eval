@@ -41,17 +41,29 @@ class cassandra00::opsc::agent (
     $agent_address = "${agent_conf}/address.yaml"
 
     # Install agent.
-    exec { "$agent_command" :
+    exec { "${agent_command}" :
       cwd     => "/",
-      creates => "$agent_address",
+      creates => "${agent_address}",
       require    => Service['opscenterd'],
+    }
+
+    $agent_etc = "/etc/opscenter-agent"
+    $agent_env_sh = "${agent_etc}/opscenter-agent-env.sh"
+    
+    file { "${agent_etc}" :
+      ensure  => directory,
+    }
+    
+    file { "${agent_env_sh}":
+        ensure  => file,
+        content  => template("${module_name}/opscenter-agent-env.sh.erb"),
     }
 
     # Enable agent service.
     service { 'opscenter-agent' :
         enable   => true,
         ensure  => running,
-        require => Exec["$agent_command"],
+        require => [ Exec["${agent_command}"], File[ "${agent_etc}", "${agent_env_sh}" ] ],
     }
-                
+    
 }
