@@ -9,7 +9,11 @@
 #ssh_port=2222
 
 # http://www.datastax.com/support-forums/topic/trouble-connecting-to-agent
-incoming_interface = 0.0.0.0
+# incoming_interface = 0.0.0.0
+
+# http://www.datastax.com/support-forums/topic/trouble-connecting-to-agent
+use_ssl = true
+
 
 #
 #
@@ -17,15 +21,17 @@ incoming_interface = 0.0.0.0
 [webserver] 
 
 # The interface that the web server uses to listen for agent connections.
-interface=0.0.0.0
+interface = <%= @ipaddress %>
 
 # The HTTP port used for client connections to the OpsCenter web server
-port=8888
+port = 8888
 
 # TODO
 ssl_keyfile  = /var/lib/opscenter/ssl/opscenter.key
 ssl_certfile = /var/lib/opscenter/ssl/opscenter.pem
 ssl_port = 8443
+
+use_ssl = true
 
 #
 # By default, OpsCenter periodically sends usage metrics about the cluster to DataStax.

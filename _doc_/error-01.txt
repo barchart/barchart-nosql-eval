@@ -1,0 +1,48 @@
+ * Starting OpsCenter agent monitor opscenter_agent_monitor
+ 
+ INFO [main] 2013-07-15 19:54:54,348 Loading conf files: /var/lib/opscenter-agent/conf/address.yaml
+ 
+ INFO [main] 2013-07-15 19:54:54,439 Java vendor/version: OpenJDK 64-Bit Server VM/1.6.0_27
+ 
+ INFO [main] 2013-07-15 19:54:54,440 Waiting for the config from OpsCenter
+ 
+ INFO [main] 2013-07-15 19:54:54,440 SSL communication is enabled
+ 
+ INFO [main] 2013-07-15 19:54:54,440 Creating stomp connection to opsc.cassandra.aws.barchart.com:61620
+ 
+ INFO [StompConnection receiver] 2013-07-15 19:54:54,456 Reconnecting in 0s.
+ 
+ INFO [main] 2013-07-15 19:54:54,457 Attempting to determine Cassandra's broadcast address through JMX
+ 
+ INFO [Initialization] 2013-07-15 19:54:54,502 Sleeping for 2s before trying to determine IP over JMX again
+ 
+ WARN [clojure-agent-send-off-pool-0] 2013-07-15 19:54:54,517 
+ 	Tried to send message while not connected: 
+ 	/conf-request [
+	 	["fe80:0:0:0:1031:3dff:fe15:59b1%2",
+	 	"0:0:0:0:0:0:0:1%1",
+	 	"10.85.102.63",
+	 	"23.21.203.137",
+	 	"127.0.0.1"],
+	 	["3.2.0","\/757329955\/conf"]
+ 	]
+ 	
+ INFO [main] 2013-07-15 19:54:54,531 Starting Jetty server: 
+ {	:host nil, 
+ 	:truststore "/var/lib/opscenter-agent/ssl/agentKeyStore", 
+ 	:configurator #<server$make_server_options$fn__4879 opsagent.http.server$make_server_options$fn__4879@55d4ee7e>, 
+ 	:keystore "/var/lib/opscenter-agent/ssl/agentKeyStore", 
+ 	:ssl? true, 
+ 	:port 61622, 
+ 	:client-auth :need, 
+ 	:join? false, 
+ 	:key-password "opscenter", 
+ 	:ssl-port 61621
+ 	}
+
+ INFO [Jetty] 2013-07-15 19:54:54,799 Jetty server started
+ 
+ ERROR [StompConnection receiver] 2013-07-15 19:54:54,941 failed to send connect message:
+javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: 
+PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: 
+unable to find valid certification path to requested target
