@@ -49,7 +49,7 @@ node default {
 }
 
 # Operations center.
-node "${cassandra_opscenter_host}" inherits default {
+node "opsc.cassandra.aws.barchart.com" inherits default {
 
   class { 'cassandra00::opsc::master' :
   }
