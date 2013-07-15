@@ -21,7 +21,7 @@ $cassandra_topology_properties = "
 # Cassandra Node IP = Data Center : Rack
 #
 cassandra-01.eqx.barchart.com=eqx:az1
-cassandra-02.eqx.barchart.com=eqx:az1
+cassandra-02.eqx.barchart.com=eqx:az2
 #
 cassandra-01.us-east-1.aws.barchart.com=us-east-1:az1
 cassandra-02.us-east-1.aws.barchart.com=us-east-1:az2
