@@ -18,6 +18,7 @@ class cassandra00::config (
     $rpc_server_type,
     $native_transport_port,
     $storage_port,
+    $ssl_storage_port,
     $partitioner,
     $data_file_directories,
     $commitlog_directory,
