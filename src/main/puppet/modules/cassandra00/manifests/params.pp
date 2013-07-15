@@ -160,6 +160,11 @@ class cassandra00::params {
         default => $::cassandra_storage_port,
     }
 
+    $ssl_storage_port = $::cassandra_ssl_storage_port ? {
+        undef   => 7001,
+        default => $::cassandra_ssl_storage_port,
+    }
+    
     $partitioner = $::cassandra_partitioner ? {
         undef   => 'org.apache.cassandra.dht.Murmur3Partitioner',
         default => $::cassandra_partitioner,

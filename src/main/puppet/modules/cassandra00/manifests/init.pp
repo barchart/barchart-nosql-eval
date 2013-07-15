@@ -29,6 +29,7 @@ class cassandra00 (
     $rpc_server_type            = $params::rpc_server_type,
     $native_transport_port      = $params::native_transport_port,
     $storage_port               = $params::storage_port,
+    $ssl_storage_port           = $params::ssl_storage_port,
     $partitioner                = $params::partitioner,
     $data_file_directories      = $params::data_file_directories,
     $commitlog_directory        = $params::commitlog_directory,
