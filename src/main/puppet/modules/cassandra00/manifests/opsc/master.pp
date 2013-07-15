@@ -21,17 +21,23 @@ class cassandra00::opsc::master  (
         require => Package['opscenter'],
     }
     
-    $master_etc     = "/etc/opscenter"
-    $master_conf    = "${master_etc}/opscenterd.conf"
-    $master_cluster = "${master_etc}/clusters/${cluster_name}"
+    $master_etc            = "/etc/opscenter"
+    $master_config         = "${master_etc}/opscenterd.conf"
+    $master_clusters       = "${master_etc}/clusters"
+    $master_clusters_entry = "${$master_clusters}/${cluster_name}"
 
-    file { "${master_conf}":
+    file { [ "${master_etc}", "${$master_clusters}" ]:
+        ensure  => directory,
+        require => Service['opscenterd'],
+    }
+
+    file { "${master_config}":
         ensure  => file,
         content  => template("${module_name}/opscenterd.conf.erb"),
         require => Service['opscenterd'],
     }
               
-    file { "${master_cluster}":
+    file { "${master_clusters_entry}":
         ensure  => file,
         content  => template("${module_name}/opscenterd.cluster.conf.erb"),
         require => Service['opscenterd'],

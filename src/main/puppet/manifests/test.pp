@@ -17,3 +17,6 @@ class { 'cassandra00' :
     heap_newsize  => 100m,
     
 }
+
+class { 'cassandra00::opsc::master' :
+}
