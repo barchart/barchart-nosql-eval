@@ -5,7 +5,7 @@ class cassandra00::opsc::agent (
 
   $opscenter_host = $params::opscenter_host
       
-  ) {
+  ) inherits params {
 
     # Resource default for Exec
     Exec {

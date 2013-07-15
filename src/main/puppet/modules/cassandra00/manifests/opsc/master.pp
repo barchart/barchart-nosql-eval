@@ -10,7 +10,7 @@ class cassandra00::opsc::master  (
   $rpc_port = $params::rpc_port, 
   $seeds    = $params::seeds, 
       
-  ) {
+  ) inherits params {
 
     include packages
 
