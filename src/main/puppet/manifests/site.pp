@@ -5,6 +5,9 @@
 # Cluster name.
 $cassandra_cluster_name = "Evaluator"
 
+# Operations center.
+$cassandra_opscenter_host = "opsc.cassandra.aws.barchart.com"
+
 # Seed node list.
 $cassandra_seeds = [
     "cassandra-01.eqx.barchart.com",
@@ -15,7 +18,7 @@ $cassandra_seeds = [
     "cassandra-02.us-west-1.aws.barchart.com",
   ]
 
-# Topology for properties snitch.
+# Topology for PropertyFileSnitch.
 $cassandra_topology_properties = "
 #
 # Cassandra Node IP = Data Center : Rack
@@ -46,26 +49,35 @@ node default {
 }
 
 # Operations center.
-node /opsc.cassandra.aws.barchart.com/ inherits default {
-  
+node "${cassandra_opscenter_host}" inherits default {
+
+  class { 'cassandra00::opsc::master' :
+  }
+    
 }
 
 # EQX cassandra nodes.
 node /cassandra-.*.eqx.barchart.com/ inherits default {
   
   class { 'cassandra00' :
-      max_heap_size => 1500m,
+      max_heap_size => 2000m,
       heap_newsize  => 100m,
   }
-  
+
+  class { 'cassandra00::opsc::agent' :
+  }
+    
 }
 
 # AWS cassandra nodes.
 node /cassandra-.*.aws.barchart.com/ inherits default {
 
   class { 'cassandra00' :
-      max_heap_size => 5000m,
+      max_heap_size => 6000m,
       heap_newsize  => 300m,
   }
-    
+
+  class { 'cassandra00::opsc::agent' :
+  }
+      
 }

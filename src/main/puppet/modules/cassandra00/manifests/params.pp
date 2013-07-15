@@ -2,7 +2,12 @@
 #
 #
 class cassandra00::params {
-    
+
+    $opscenter_host = $::cassandra_opscenter_host ? {
+        undef   => "opsc",
+        default => $::cassandra_opscenter_host,
+    }
+      
     $include_repo = $::cassandra_include_repo ? {
         undef   => true,
         default => $::cassandra_include_repo

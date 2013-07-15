@@ -1,0 +1,24 @@
+#
+# http://www.datastax.com/docs/opscenter/configure/configure_opscenter_adv 
+#
+
+[jmx] 
+# The JMX (Java Management Extensions) port of your cluster. 
+port = <%= @jmx_port %>
+
+
+#
+#
+#
+[cassandra] 
+# A Cassandra seed node is used to determine the ring topology 
+# and obtain gossip information about the nodes in the cluster. 
+# This should be the same comma-delimited list of seed nodes 
+# as the one configured for your Cassandra or DataStax Enterprise cluster 
+# by the seeds property in the cassandra.yaml configuration file
+seed_hosts = <%= @seeds.join(',') %>
+
+# The Thrift remote procedure call port configured for your cluster. 
+# Same as the rpc_port property in the cassandra.yaml configuration file. Default is 9160
+api_port = <%= @rpc_port %>
+
