@@ -153,6 +153,7 @@ class cassandra00 (
         rpc_server_type            => $rpc_server_type,
         native_transport_port      => $native_transport_port,
         storage_port               => $storage_port,
+        ssl_storage_port           => $ssl_storage_port,
         partitioner                => $partitioner,
         data_file_directories      => $data_file_directories,
         commitlog_directory        => $commitlog_directory,
