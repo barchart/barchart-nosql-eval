@@ -54,8 +54,8 @@ node /opsc.cassandra.aws.barchart.com/ inherits default {
 node /cassandra-.*.eqx.barchart.com/ inherits default {
   
   class { 'cassandra00' :
-      max_heap_size => 2500m,
-      heap_newsize  => 150m,
+      max_heap_size => 2000m,
+      heap_newsize  => 100m,
   }
   
 }
