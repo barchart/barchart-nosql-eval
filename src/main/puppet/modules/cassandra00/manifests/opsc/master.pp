@@ -80,7 +80,7 @@ class cassandra00::opsc::master  (
           "${master_config}", 
           "${master_clusters_entry}",
           "${master_default}",
-          "${java_home_sh}",
+          "${java_home_sh}"
         ],
     }
               
