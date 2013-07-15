@@ -69,4 +69,10 @@ class cassandra00::config (
         content => template("${module_name}/cassandra.yaml.erb"),
     }
     
+    # TODO parameterize
+    file { "/etc/dse/dse-env.sh":
+        ensure  => file,
+        content => template("${module_name}/dse-env.sh.erb"),
+    }
+      
 }
