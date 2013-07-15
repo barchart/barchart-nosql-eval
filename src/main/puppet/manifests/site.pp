@@ -7,12 +7,12 @@ $cassandra_cluster_name = "Evaluator"
 
 # Seed node list.
 $cassandra_seeds = [
-    cassandra-01.eqx.barchart.com,
-    cassandra-01.us-east-1.aws.barchart.com,
-    cassandra-01.us-west-1.aws.barchart.com,
-    cassandra-02.eqx.barchart.com
-    cassandra-02.us-east-1.aws.barchart.com,
-    cassandra-02.us-west-1.aws.barchart.com,
+    "cassandra-01.eqx.barchart.com",
+    "cassandra-01.us-east-1.aws.barchart.com",
+    "cassandra-01.us-west-1.aws.barchart.com",
+    "cassandra-02.eqx.barchart.com",
+    "cassandra-02.us-east-1.aws.barchart.com",
+    "cassandra-02.us-west-1.aws.barchart.com",
   ]
 
 # Topology for properties snitch.
