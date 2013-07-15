@@ -6,6 +6,7 @@
 # The Secure Shell (SSH) port that listens for agent-OpsCenter communications. 
 #
 [agents] 
+
 #ssh_port=2222
 
 # http://www.datastax.com/support-forums/topic/trouble-connecting-to-agent
@@ -14,6 +15,9 @@ incoming_interface = <%= @ipaddress %>
 # http://www.datastax.com/support-forums/topic/trouble-connecting-to-agent
 use_ssl = true
 
+# http://www.datastax.com/support-forums/topic/are-6162061621-ports-configurable-in-community-version-of-opscenter
+https_port = 61621
+incoming_port = 61620
 
 #
 #
@@ -39,3 +43,21 @@ use_ssl = true
 [stat_reporter]
 interval = 0
 
+[logging]
+
+#
+#
+#
+[cassandra]
+
+#seed_hosts = 10.1.1.242, 10.1.1.243, 10.1.1.244
+
+#
+#
+#
+[cassandra_metrics]
+
+#
+#
+#
+[authentication]

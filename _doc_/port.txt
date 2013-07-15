@@ -19,3 +19,16 @@ tcp6       0      0 10.85.102.63:47447      54.244.253.46:61620     TIME_WAIT
 013-07-15 20:11:53+0000 [Evaluator]  WARN: HTTP request 
 https://54.215.0.192:61621/cluster/topology?node_ip=54.215.0.192 failed:
 
+###############################################3#
+
+127.0.0.1:61619
+
+http://www.datastax.com/support-forums/topic/agents-running-without-error-but-not-connecting-to-opscenter
+
+In addition to acting as a normal webserver, 
+opscenterd also pushes data to the browser using orbited (http://orbited2.org/). 
+To do that, opscenterd listens on 127.0.0.1:61619 (by default) 
+and tunnels requests to <opscenterd_ip>/tcp to that interface and port
+
+###############################################3#
+

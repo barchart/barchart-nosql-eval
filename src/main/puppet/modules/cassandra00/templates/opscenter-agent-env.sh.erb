@@ -3,8 +3,11 @@
 #
 #
 #
-VM_OPTS="$JVM_OPTS -Xmx40M"
+
+JVM_OPTS="$JVM_OPTS -Xmx40M"
 JVM_OPTS="$JVM_OPTS -Xms40M"
+
+JVM_OPTS="$JVM_OPTS -Djava.net.preferIPv4Stack=true"
 
 # ensure JAVA_HOME
 . /etc/profile.d/java-home.sh

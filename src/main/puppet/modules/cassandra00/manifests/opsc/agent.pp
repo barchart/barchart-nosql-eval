@@ -20,6 +20,8 @@ class cassandra00::opsc::agent (
         ensure     => stopped,
         require    => Package['opscenter'],
     }
+    
+    $java_home_sh = "/etc/profile.d/java-home.sh"
 
     $master_shared = "/usr/share/opscenter"
     $agent_shared  = "${master_shared}/agent"
@@ -34,7 +36,7 @@ class cassandra00::opsc::agent (
           default  => undef,
     }
 
-    $agent_command = "${agent_install} ${agent_pack} ${opscenter_host}"
+    $agent_command = "${java_home_sh} ; ${agent_install} ${agent_pack} ${opscenter_host}"
         
     $agent_store = "/var/lib/opscenter-agent"
     $agent_conf  = "${agent_store}/conf"
@@ -63,7 +65,10 @@ class cassandra00::opsc::agent (
     service { 'opscenter-agent' :
         enable   => true,
         ensure  => running,
-        require => [ Exec["${agent_command}"], File[ "${agent_etc}", "${agent_env_sh}" ] ],
+        require => [ 
+          Exec["${agent_command}"], 
+          File[ "${agent_etc}", "${agent_env_sh}", "${java_home_sh}" ],
+        ],
     }
     
 }

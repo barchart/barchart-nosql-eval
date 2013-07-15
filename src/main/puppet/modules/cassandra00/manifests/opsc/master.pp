@@ -37,6 +37,8 @@ class cassandra00::opsc::master  (
     
     include packages
 
+    $java_home_sh = "/etc/profile.d/java-home.sh"
+    
     $master_etc            = "/etc/opscenter"
     $master_config         = "${master_etc}/opscenterd.conf"
     $master_clusters       = "${master_etc}/clusters"
@@ -56,12 +58,30 @@ class cassandra00::opsc::master  (
         content  => template("${module_name}/opscenterd.cluster.conf.erb"),
     }
 
+    $etc_default = "/etc/default"
+    $master_default = "${etc_default}/opscenterd"
+    
+    file { "${etc_default}" :
+        ensure  => directory,
+    }
+    
+    file { "${master_default}" :
+        ensure  => file,
+        content  => template("${module_name}/opscenterd.default.erb"),
+        require => File["/etc/default"],
+    }
+    
     # Enable master service.    
     service { 'opscenterd' :
         enable   => true,
         ensure  => running,
         require => Package['opscenter'],
-        subscribe   => File[ "${master_config}", "${master_clusters_entry}" ],
+        subscribe   => File[ 
+          "${master_config}", 
+          "${master_clusters_entry}",
+          "${master_default}",
+          "${java_home_sh}",
+        ],
     }
               
 }

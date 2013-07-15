@@ -55,6 +55,7 @@ class java00::install {
   # Provide JAVA_HOME
   file { "/etc/profile.d/java-home.sh":
     backup => false, 
+    mode   => 0755,
     content => "export JAVA_HOME=${java_root}",
     ensure => file, 
     require => Exec["move-${java}"],
