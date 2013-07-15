@@ -23,7 +23,7 @@ define java00::download (
     $options = "--no-cookies --no-check-certificate --header '${header}'"
       
     exec { $name:                                                                                                                     
-        command => "wget ${options} ${remote}/${name}",                                                         
+        command => "wget ${options} -O ${name} ${remote}/${name}",                                                         
         cwd => $local,
         creates => "${local}/${name}",                                                              
         timeout => $timeout,
