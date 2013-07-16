@@ -4,56 +4,80 @@
 class cassandra_00::opsc::secrets {
   
   # Reuse puppet node security for the operations center.    
+  $puppet_lib = "/var/lib/puppet"
+  $puppet_ssl = "${puppet_lib}/ssl"
+  $puppet_ca_file    = "puppet_ssl/certs/ca.pem"
+  $puppet_cert_file  = "puppet_ssl/certs/${fqdn}.pem"
+  $puppet_pkey_file  = "puppet_ssl/private_keys/${fqdn}.pem"
   
-  $ssl_cafile   = "/var/lib/puppet/ssl/certs/ca.pem"
-  $ssl_nodefile  = "/var/lib/puppet/ssl/certs/${fqdn}.pem"
+  # master
+  $master_lib = "/var/lib/opscenter"
+  $master_ssl = "${master_lib}/ssl"
+
+  file { [ "${master_lib}", "${master_ssl}" ] : ensure => directory }
+    
+  # master [agents]
+  $jks_keyfile = "${master_ssl}/agentKeyStore"
+  $p12_keyfile = "${master_ssl}/agentKeyStore.p12"
+  $pem_keyfile = "${master_ssl}/agentKeyStore.pem"
   
-  $ssl_certfile = "/var/lib/puppet/ssl/certs/web.pem"
-  $ssl_keyfile  = "/var/lib/puppet/ssl/private_keys/${fqdn}.pem"
+  # master [webserver]
+  $ssl_keyfile  = "/${master_ssl}/opscenter.key"
+  $ssl_certfile = "/${master_ssl}/opscenter.pem" 
 
-  # Agent keystore location and naming.
-
+  
+  # agent
   $agent_lib = "/var/lib/opscenter-agent"
   $agent_ssl = "${agent_lib}/ssl"
-  $agent_keystore = "${agent_ssl}/agentKeyStore"
-  
-  $keystore_ca   = "ca:${agent_keystore}"
-  $keystore_key  = "agent_key:${agent_keystore}"
-  $keystore_cert = "opscenter_cert:${agent_keystore}"
-  
-  $keystore_password = "opscenter"
+  $agent_keyfile = "${agent_ssl}/agentKeyStore"
 
   file { [ "${agent_lib}", "${agent_ssl}" ] : ensure => directory }
-
-  # Make master cert based on puppet.
-      
-  file { "${ssl_certfile}" :
-    require => File[ "${agent_lib}", "${agent_ssl}" ],
-    content  => generate( "/bin/cat", "${ssl_nodefile}", "${ssl_cafile}"  )
-  }
     
-  # Make agent keystore based on puppet.
-  
-  java_ks { "${keystore_ca}" :
-    require    => File[ "${ssl_certfile}" ],
+  # shared
+  $keystore_entry  = "agent_key:${agent_keyfile}"
+  $keystore_password = "opscenter"
+
+  # master / jks
+  java_ks { "${jks_keyfile}" :
     ensure     => latest,
-    certificate => "${ssl_cafile}",
+    certificate => "${puppet_cert_file}",
+    private_key => "${puppet_pkey_file}",
+    password    => "${keystore_password}",
+  }
+
+  # master / p12
+  openssl::export::p12 { "${p12_keyfile}" :
+    ensure     => 'present',
+    certificate => "${puppet_cert_file}",
+    private_key => "${puppet_pkey_file}",
     password    => "${keystore_password}",
   }
   
-  java_ks { "${keystore_key}" :
-    require    => Java_ks[ "${keystore_ca}" ],
-    ensure     => latest,
-    private_key => "${ssl_keyfile}",
-    certificate => "${ssl_certfile}",
-    password    => "${keystore_password}",
+  # master / pem
+  openssl::export::pem { "${pem_keyfile}" :
+    require    => Openssl::Export::P12[ "${p12_keyfile}" ], 
+    ensure   => 'present',
+    file_p12  => "${p12_keyfile}",
+    password  => "${keystore_password}",
   }
-  
-  java_ks { "${keystore_cert}" :
-    require    => Java_ks[ "${keystore_key}" ],
-    ensure     => latest,
-    certificate => "${ssl_certfile}",
-    password    => "${keystore_password}",
-  }
-  
+
+  # master cert
+  file { "${ssl_certfile}" :
+     ensure  => 'link',
+     target   => "${puppet_cert_file}",
+  }  
+      
+  # master key
+  file { "${ssl_keyfile}" :
+     ensure  => 'link',
+     target   => "${puppet_pkey_file}",
+  }  
+
+  # agent jks
+  file { "${agent_keyfile}" :
+     require => Java_ks[ "${jks_keyfile}" ],
+     ensure  => 'link',
+     target   => "${jks_keyfile}",
+  }  
+    
 }

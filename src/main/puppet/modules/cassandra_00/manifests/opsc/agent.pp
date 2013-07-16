@@ -11,10 +11,8 @@ class cassandra_00::opsc::agent (
 
     $opscenter_host = $params::opscenter_host
     
-    $keystore_ca   = $secrets::keystore_ca
-    $keystore_key  = $secrets::keystore_key
-    $keystore_cert = $secrets::keystore_cert
-
+    $agent_keyfile  = $secrets::agent_keyfile
+    
     #
     
     # Resource default for Exec
@@ -22,7 +20,7 @@ class cassandra_00::opsc::agent (
         path  => "${::path}",
     }
         
-    # Disable master service.    
+    # Agent uses master for package delivery.
     service { 'opscenterd' :
         enable     => false,
         ensure     => stopped,
@@ -44,13 +42,14 @@ class cassandra_00::opsc::agent (
           default  => undef,
     }
 
+    # Installer invocation.
     $agent_command = "${java_home_sh} ; ${agent_install} ${agent_pack} ${opscenter_host}"
         
     $agent_lib = "/var/lib/opscenter-agent"
     $agent_conf  = "${agent_lib}/conf"
     $agent_address = "${agent_conf}/address.yaml"
 
-    # Install agent.
+    # Invoke agent install.
     exec { "${agent_command}" :
       cwd     => "/",
       creates => "${agent_address}",
@@ -64,6 +63,7 @@ class cassandra_00::opsc::agent (
         ensure  => directory,
     }
     
+    # Provide agent environment.
     file { "${agent_env_sh}":
         ensure  => file,
         content  => template("${module_name}/opscenter-agent-env.sh.erb"),
@@ -75,8 +75,7 @@ class cassandra_00::opsc::agent (
         ensure  => running,
         require => Exec[ "${agent_command}" ], 
         subscribe => [
-          File[ "${agent_etc}", "${agent_env_sh}", "${java_home_sh}" ],
-          Java_ks[ "${keystore_cert}" ],
+          File[ "${agent_env_sh}", "${java_home_sh}", "${agent_keyfile}" ],
         ],
     }
     

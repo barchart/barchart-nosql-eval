@@ -3,17 +3,24 @@
 #
 
 #
-# The Secure Shell (SSH) port that listens for agent-OpsCenter communications. 
+#
 #
 [agents] 
 
+# The Secure Shell (SSH) port that listens for agent-OpsCenter communications. 
 #ssh_port=2222
 
 # http://www.datastax.com/support-forums/topic/trouble-connecting-to-agent
 incoming_interface = <%= @ipaddress %>
 
+#
+# NOTE: uses hard-coded paths to 3 ssl kyes for stomp
 # http://www.datastax.com/support-forums/topic/trouble-connecting-to-agent
+#
 use_ssl = true
+jks_keyfile = <%= @jks_keyfile %> 
+p12_keyfile = <%= @p12_keyfile %>
+pem_keyfile = <%= @pem_keyfile %>
 
 # http://www.datastax.com/support-forums/topic/are-6162061621-ports-configurable-in-community-version-of-opscenter
 https_port = 61621
@@ -31,12 +38,11 @@ interface = <%= @ipaddress %>
 port = 8888
 
 # 
+use_ssl = true
 ssl_port = 8443
-#
 ssl_keyfile  = <%= @ssl_keyfile %>
 ssl_certfile = <%= @ssl_certfile %>
 
-use_ssl = true
 
 #
 # By default, OpsCenter periodically sends usage metrics about the cluster to DataStax.

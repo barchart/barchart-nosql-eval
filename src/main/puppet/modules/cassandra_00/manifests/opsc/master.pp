@@ -16,7 +16,10 @@ class cassandra_00::opsc::master  (
     $rpc_port = $params::rpc_port 
     $seeds    = $params::seeds
     
-    $ssl_cafile   = $secrets::ssl_cafile
+    $jks_keyfile  = $secrets::jks_keyfile
+    $p12_keyfile  = $secrets::p12_keyfile
+    $pem_keyfile  = $secrets::pem_keyfile
+
     $ssl_keyfile  = $secrets::ssl_keyfile
     $ssl_certfile = $secrets::ssl_certfile
 
