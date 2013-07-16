@@ -6,13 +6,11 @@ class cassandra_00::opsc::secrets {
   # Reuse puppet node security for the operations center.    
   
   $ssl_cafile   = "/var/lib/puppet/ssl/certs/ca.pem"
-  $ssl_certfile = "/var/lib/puppet/ssl/certs/${fqdn}.pem"
+  $ssl_nodefile  = "/var/lib/puppet/ssl/certs/${fqdn}.pem"
+  
+  $ssl_certfile = "/var/lib/puppet/ssl/certs/web.pem"
   $ssl_keyfile  = "/var/lib/puppet/ssl/private_keys/${fqdn}.pem"
 
-  notify { "### ssl_cafile   : ${ssl_cafile}": }
-  notify { "### ssl_certfile : ${ssl_certfile}": }
-  notify { "### ssl_keyfile  : ${ssl_keyfile}" : }
-  
   # Agent keystore location and naming.
 
   $agent_lib = "/var/lib/opscenter-agent"
@@ -26,11 +24,18 @@ class cassandra_00::opsc::secrets {
   $keystore_password = "opscenter"
 
   file { [ "${agent_lib}", "${agent_ssl}" ] : ensure => directory }
-  
+
+  # Make master cert based on puppet.
+      
+  file { "${ssl_certfile}" :
+    require    => File[ "${agent_lib}", "${agent_ssl}" ],
+    content => generate( "/bin/cat", "${ssl_cafile}", "${ssl_nodefile}" )
+  }
+    
   # Make agent keystore based on puppet.
   
   java_ks { "${keystore_ca}" :
-    require    => File[ "${agent_lib}", "${agent_ssl}" ],
+    require    => File[ "${ssl_certfile}" ],
     ensure     => latest,
     certificate => "${ssl_cafile}",
     password    => "${keystore_password}",
