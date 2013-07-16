@@ -39,7 +39,8 @@ class cassandra_00::opsc::secrets {
 
   # master / jks
   java_ks { "${jks_keyfile}" :
-    ensure     => 'present',
+    require    => File[ "${master_ssl}" ],
+    ensure     => latest,
     certificate => "${puppet_cert_file}",
     private_key => "${puppet_pkey_file}",
     password    => "${keystore_password}",
@@ -47,7 +48,7 @@ class cassandra_00::opsc::secrets {
 
   # master / p12
   openssl::export::p12 { "${p12_keyfile}" :
-    ensure     => 'present',
+    ensure     => present,
     certificate => "${puppet_cert_file}",
     private_key => "${puppet_pkey_file}",
     password    => "${keystore_password}",
@@ -56,27 +57,27 @@ class cassandra_00::opsc::secrets {
   # master / pem
   openssl::export::pem { "${pem_keyfile}" :
     require    => Openssl::Export::P12[ "${p12_keyfile}" ], 
-    ensure   => 'present',
+    ensure   => present,
     file_p12  => "${p12_keyfile}",
     password  => "${keystore_password}",
   }
 
   # master cert
   file { "${ssl_certfile}" :
-     ensure  => 'link',
+     ensure  => link,
      target   => "${puppet_cert_file}",
   }  
       
   # master key
   file { "${ssl_keyfile}" :
-     ensure  => 'link',
+     ensure  => link,
      target   => "${puppet_pkey_file}",
   }  
 
   # agent jks
   file { "${agent_keyfile}" :
      require => Java_ks[ "${jks_keyfile}" ],
-     ensure  => 'link',
+     ensure  => link,
      target   => "${jks_keyfile}",
   }  
     
