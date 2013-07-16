@@ -26,7 +26,7 @@ class cassandra_00::opsc::master  (
     $master_etc            = "/etc/opscenter"
     $master_config         = "${master_etc}/opscenterd.conf"
     $master_clusters       = "${master_etc}/clusters"
-    $master_clusters_entry = "${$master_clusters}/${cluster_name}"
+    $master_clusters_entry = "${$master_clusters}/${cluster_name}.conf"
 
     file { [ "${master_etc}", "${$master_clusters}" ]:
         ensure  => directory,
