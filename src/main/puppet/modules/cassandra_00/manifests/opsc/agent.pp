@@ -11,8 +11,9 @@ class cassandra_00::opsc::agent (
 
     $opscenter_host = $params::opscenter_host
     
-    $keystore_agent_key      = $secrets::keystore_agent_key
-    $keystore_opscenter_cert = $secrets::keystore_opscenter_cert
+    $keystore_ca   = $secrets::keystore_ca
+    $keystore_key  = $secrets::keystore_key
+    $keystore_cert = $secrets::keystore_cert
 
     #
     
@@ -60,7 +61,7 @@ class cassandra_00::opsc::agent (
     $agent_env_sh = "${agent_etc}/opscenter-agent-env.sh"
     
     file { "${agent_etc}" :
-      ensure  => directory,
+        ensure  => directory,
     }
     
     file { "${agent_env_sh}":
@@ -75,7 +76,7 @@ class cassandra_00::opsc::agent (
         require => Exec[ "${agent_command}" ], 
         subscribe => [
           File[ "${agent_etc}", "${agent_env_sh}", "${java_home_sh}" ],
-          Java_ks[ "${keystore_agent_key}", "${keystore_opscenter_cert}" ],
+          Java_ks[ "${keystore_cert}" ],
         ],
     }
     
