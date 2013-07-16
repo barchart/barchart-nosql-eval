@@ -12,12 +12,17 @@ class cassandra_00::opsc::secrets {
   notify { "### ssl_keyfile : ${ssl_keyfile}" : }
   
   # Agent keystore location and naming.
-  
-  $agent_keystore =  "/var/lib/opscenter-agent/ssl/agentKeyStore"
-  $keystore_agent_key =            "agent_key:${agent_keystore}"
-  $keystore_opscenter_cert =  "opscenter_cert:${agent_keystore}"
+
+  $agent_lib = "/var/lib/opscenter-agent"
+  $agent_ssl = "${agent_lib}/ssl"
+  $agent_keystore = "${agent_ssl}/agentKeyStore"
+  $keystore_agent_key = "agent_key:${agent_keystore}"
+  $keystore_opscenter_cert = "opscenter_cert:${agent_keystore}"
   $opscenter_password = "opscenter"
 
+  file { "${agent_lib}" : ensure => directory }
+  file { "${agent_ssl}" : ensure => directory }
+  
   # Make agent keystore based on puppet.
   
   java_ks { "${keystore_agent_key}" :
