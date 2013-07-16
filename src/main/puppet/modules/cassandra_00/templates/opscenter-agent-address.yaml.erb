@@ -8,11 +8,11 @@
 
 # Private internal interface for agent local socket binding.
 # Same as listen_address in cassandra.yaml
-#agent_rpc_interface: <%= @agent_rpc_interface %>
+agent_rpc_interface: <%= @agent_rpc_interface %>
 
 # Public external host name or address for inbound nat which maps into agent_rpc_interface.
 # Same as broadcast_address in cassandra.yaml
-#agent_rpc_broadcast_address: <%= @agent_rpc_broadcast_address %>
+agent_rpc_broadcast_address: <%= @agent_rpc_broadcast_address %>
 
 #
 #
@@ -26,4 +26,3 @@
 # Public external host name or addrss for opscenter master.
 # 
 stomp_interface: <%= @stomp_interface %>
-
