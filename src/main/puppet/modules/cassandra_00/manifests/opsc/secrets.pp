@@ -37,7 +37,7 @@ class cassandra_00::opsc::secrets {
   }
   
   java_ks { "${keystore_key}" :
-    require    => "${keystore_ca}",
+    require    => Java_ks[ "${keystore_ca}" ],
     ensure     => latest,
     private_key => "${ssl_keyfile}",
     certificate => "${ssl_certfile}",
@@ -45,7 +45,7 @@ class cassandra_00::opsc::secrets {
   }
   
   java_ks { "${keystore_cert}" :
-    require    => "${keystore_key}",
+    require    => Java_ks[ "${keystore_key}" ],
     ensure     => latest,
     certificate => "${ssl_certfile}",
     password    => "${keystore_password}",
