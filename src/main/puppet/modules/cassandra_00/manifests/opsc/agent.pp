@@ -27,8 +27,6 @@ class cassandra_00::opsc::agent (
         require    => Package['opscenter'],
     }
     
-    $java_home_sh = "/etc/profile.d/java-home.sh"
-
     $master_shared = "/usr/share/opscenter"
     $agent_shared  = "${master_shared}/agent"
     
@@ -43,6 +41,7 @@ class cassandra_00::opsc::agent (
     }
 
     # Installer invocation.
+    $java_home_sh = "/etc/profile.d/java-home.sh"
     $agent_command = "${java_home_sh} ; ${agent_install} ${agent_pack} ${opscenter_host}"
         
     $agent_lib = "/var/lib/opscenter-agent"
@@ -65,8 +64,17 @@ class cassandra_00::opsc::agent (
     
     # Provide agent environment.
     file { "${agent_env_sh}":
-        ensure  => file,
         content  => template("${module_name}/opscenter-agent-env.sh.erb"),
+    }
+    
+    # Agent network configuration.
+    $agent_rpc_interface         = $params::listen_address
+    $agent_rpc_broadcast_address = $params::broadcast_address
+    $local_interface             = $params::broadcast_address
+    $stomp_interface             = $params::opscenter_host
+    #
+    file { "${agent_address}" :
+      content  => template("${module_name}/opscenter-agent-address.yaml.erb"),
     }
     
     # Enable agent service.
@@ -76,7 +84,7 @@ class cassandra_00::opsc::agent (
         require => Exec[ "${agent_command}" ], 
         subscribe => [
           File[ "${agent_env_sh}", "${java_home_sh}" ],
-          File[ "${agent_keyfile}" ],
+          File[ "${agent_address}", "${agent_keyfile}" ],
         ]
     }
     
