@@ -1,0 +1,92 @@
+agents: [
+    ('incoming_interface',
+    '10.224.19.247'),
+    ('use_ssl',
+    'true'),
+    ('https_port',
+    '61621'),
+    ('incoming_port',
+    '61620')
+],
+webserver: [
+    ('interface',
+    '10.224.19.247'),
+    ('port',
+    '8888'),
+    ('ssl_port',
+    '8443'),
+    ('ssl_keyfile',
+    '/var/lib/puppet/ssl/private_keys/opsc.cassandra.aws.barchart.com.pem'),
+    ('ssl_certfile',
+    '/var/lib/puppet/ssl/certs/opsc.cassandra.aws.barchart.com.pem'),
+    ('use_ssl',
+    'true')
+],
+stat_reporter: [
+    ('interval',
+    '0')
+],
+logging: [
+    ('level',
+    'DEBUG')
+],
+cassandra: [
+    ('seed_hosts',
+    '')
+],
+cassandra_metrics: [
+    
+],
+authentication: [
+    
+],
+
+
+###############
+
+jmx: [
+    ('port',
+    '7199')
+],
+cassandra: [
+    ('seed_hosts',
+    'cassandra-01.eqx.barchart.com,
+    cassandra-01.us-east-1.aws.barchart.com,
+    cassandra-01.us-west-1.aws.barchart.com,
+    cassandra-02.eqx.barchart.com,
+    cassandra-02.us-east-1.aws.barchart.com,
+    cassandra-02.us-west-1.aws.barchart.com'),
+    ('api_port',
+    '9160')
+],
+
+
+###############
+
+
+agent_configitems: {
+    'cassandra_log_location': '/var/log/cassandra/system.log',
+    'thrift_port': 9160,
+    'thrift_ssl_truststore': None,
+    'rollups300_ttl': 2419200,
+    'rollups86400_ttl': -1,
+    'jmx_port': 7199,
+    'metrics_ignored_solr_cores': '',
+    'api_port': '61621',
+    'metrics_enabled': 1,
+    'thrift_ssl_truststore_type': 'JKS',
+    'kerberos_use_ticket_cache': True,
+    'kerberos_renew_tgt': True,
+    'rollups60_ttl': 604800,
+    'cassandra_install_location': '',
+    'rollups7200_ttl': 31536000,
+    'kerberos_debug': False,
+    'storage_keyspace': 'OpsCenter',
+    'ec2_metadata_api_host': '169.254.169.254',
+    'provisioning': 0,
+    'kerberos_use_keytab': True,
+    'metrics_ignored_column_families': '',
+    'thrift_ssl_truststore_password': None,
+    'metrics_ignored_keyspaces': 'system, system_traces, system_auth, dse_auth, OpsCenter'
+}
+

@@ -60,7 +60,7 @@ class cassandra_00::opsc::master  (
         enable   => true,
         ensure  => running,
         require => Package['opscenter'],
-        subscribe   => File[ 
+        subscribe => File[ 
           "${master_config}", 
           "${master_clusters_entry}",
           "${master_default}",
