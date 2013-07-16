@@ -39,7 +39,7 @@ class cassandra_00::opsc::secrets {
 
   # master / jks
   java_ks { "${jks_keyfile}" :
-    ensure     => latest,
+    ensure     => 'present',
     certificate => "${puppet_cert_file}",
     private_key => "${puppet_pkey_file}",
     password    => "${keystore_password}",
