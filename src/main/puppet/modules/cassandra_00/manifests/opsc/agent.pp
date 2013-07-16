@@ -72,8 +72,8 @@ class cassandra_00::opsc::agent (
     service { 'opscenter-agent' :
         enable   => true,
         ensure  => running,
-        subscribe => [ 
-          Exec[ "${agent_command}" ], 
+        require => Exec[ "${agent_command}" ], 
+        subscribe => [
           File[ "${agent_etc}", "${agent_env_sh}", "${java_home_sh}" ],
           Java_ks[ "${keystore_agent_key}", "${keystore_opscenter_cert}" ],
         ],
