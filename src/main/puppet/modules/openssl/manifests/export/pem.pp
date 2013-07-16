@@ -11,7 +11,8 @@
 define openssl::export::pem(
   $file_p12,
   $password,
-  $ensure=present
+  $ensure,
+  $eventer,
 ) {
 
   # Resource default for Exec
@@ -20,17 +21,18 @@ define openssl::export::pem(
   }
     
   case $ensure {
+    
     present: {
-      $pass_opt = $password ? {
-        ''      => '',
-        default => "-passout pass:${password}",
-      }
 
-      exec {"${name}":
-        command => "openssl pkcs12 -in ${file_p12} -out ${name} -nodes ${pass_opt}",
-        creates => "${name}",
+      $security = "-passin pass:${password} -passout pass:${password}"
+      
+      exec {"${name}" :
+        subscribe => $eventer, 
+        refreshonly => true,
+        command => "openssl pkcs12 -in ${file_p12} -out ${name} ${security}",
       }
     }
+
     absent: {
       file {"${name}":
         ensure => absent,

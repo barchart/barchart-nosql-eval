@@ -16,30 +16,28 @@ class cassandra_00::opsc::secrets {
 
   file { [ "${master_lib}", "${master_ssl}" ] : ensure => directory }
     
-  # master [agents]
+  # master [agents]: ssl for stomp
   $jks_keyfile = "${master_ssl}/agentKeyStore"
   $p12_keyfile = "${master_ssl}/agentKeyStore.p12"
   $pem_keyfile = "${master_ssl}/agentKeyStore.pem"
   
-  # master [webserver]
+  # master [webserver]: ssl for https
   $ssl_keyfile  = "${master_ssl}/opscenter.key"
   $ssl_certfile = "${master_ssl}/opscenter.pem" 
-
   
-  # agent
+  # agent: ssl for both stomp and https
   $agent_lib = "/var/lib/opscenter-agent"
   $agent_ssl = "${agent_lib}/ssl"
   $agent_keyfile = "${agent_ssl}/agentKeyStore"
 
   file { [ "${agent_lib}", "${agent_ssl}" ] : ensure => directory }
     
-  # shared
-  $keystore_entry  = "agent_key:${agent_keyfile}"
+  # shared java store
+  $keystore_entry  = "agent_key:${jks_keyfile}"
   $keystore_password = "opscenter"
 
   # master / jks
-  java_ks { "${jks_keyfile}" :
-    require    => File[ "${master_ssl}" ],
+  java_ks { "${keystore_entry}" :
     ensure     => latest,
     certificate => "${puppet_cert_file}",
     private_key => "${puppet_pkey_file}",
@@ -49,17 +47,20 @@ class cassandra_00::opsc::secrets {
   # master / p12
   openssl::export::p12 { "${p12_keyfile}" :
     ensure     => present,
+    entry_name  => "agent_key", 
     certificate => "${puppet_cert_file}",
     private_key => "${puppet_pkey_file}",
     password    => "${keystore_password}",
+    eventer => Java_ks[ "${keystore_entry}" ],
   }
   
   # master / pem
   openssl::export::pem { "${pem_keyfile}" :
-    require    => Openssl::Export::P12[ "${p12_keyfile}" ], 
     ensure   => present,
+    require  => Openssl::Export::P12[ "${p12_keyfile}" ],  
     file_p12  => "${p12_keyfile}",
     password  => "${keystore_password}",
+    eventer => Java_ks[ "${keystore_entry}" ],
   }
 
   # master cert
@@ -76,9 +77,9 @@ class cassandra_00::opsc::secrets {
 
   # agent jks
   file { "${agent_keyfile}" :
-     require => Java_ks[ "${jks_keyfile}" ],
-     ensure  => link,
-     target   => "${jks_keyfile}",
+   require => Java_ks[ "${keystore_entry}" ], 
+   ensure  => link,
+   target   => "${jks_keyfile}",
   }  
-    
+
 }

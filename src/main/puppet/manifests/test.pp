@@ -18,9 +18,9 @@ class { 'cassandra_00' :
     
 }
 
-#class { 'cassandra_00::opsc::master' :
-#}
-
-class { 'cassandra_00::opsc::agent' :
+class { 'cassandra_00::opsc::master' :
 }
+
+#class { 'cassandra_00::opsc::agent' :
+#}
 

@@ -9,10 +9,12 @@
 #   [*pkey_pass*] - private key password
 #
 define openssl::export::p12(
+  $entry_name,
   $private_key,
   $certificate,
   $password,
-  $ensure=present
+  $ensure,
+  $eventer, 
 ) {
 
   # Resource default for Exec
@@ -21,21 +23,24 @@ define openssl::export::p12(
   }
 
   case $ensure {
+    
     present: {
-      $pass_opt = $password ? {
-        ''      => '',
-        default => "-passout pass:${password}",
-      }
+
+      $security = "-passout pass:${password}"
 
       exec {"${name}":
-        command => "openssl pkcs12 -export -in ${certificate} -inkey ${private_key} -out ${name} -name ${name} -nodes ${pass_opt}",
-        creates => "${name}",
+        subscribe => $eventer, 
+        refreshonly => true,
+        command => "openssl pkcs12 -export -in ${certificate} -inkey ${private_key} -out ${name} -name ${entry_name} ${security}",
       }
     }
+    
     absent: {
       file {"${name}":
         ensure => absent,
       }
     }
+    
   }
+  
 }
