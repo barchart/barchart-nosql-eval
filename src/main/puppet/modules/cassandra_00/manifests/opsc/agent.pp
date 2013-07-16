@@ -45,8 +45,8 @@ class cassandra_00::opsc::agent (
 
     $agent_command = "${java_home_sh} ; ${agent_install} ${agent_pack} ${opscenter_host}"
         
-    $agent_store = "/var/lib/opscenter-agent"
-    $agent_conf  = "${agent_store}/conf"
+    $agent_lib = "/var/lib/opscenter-agent"
+    $agent_conf  = "${agent_lib}/conf"
     $agent_address = "${agent_conf}/address.yaml"
 
     # Install agent.
