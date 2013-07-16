@@ -6,9 +6,9 @@ class cassandra_00::opsc::secrets {
   # Reuse puppet node security for the operations center.    
   $puppet_lib = "/var/lib/puppet"
   $puppet_ssl = "${puppet_lib}/ssl"
-  $puppet_ca_file    = "puppet_ssl/certs/ca.pem"
-  $puppet_cert_file  = "puppet_ssl/certs/${fqdn}.pem"
-  $puppet_pkey_file  = "puppet_ssl/private_keys/${fqdn}.pem"
+  $puppet_ca_file    = "${puppet_ssl}/certs/ca.pem"
+  $puppet_cert_file  = "${puppet_ssl}/certs/${fqdn}.pem"
+  $puppet_pkey_file  = "${puppet_ssl}/private_keys/${fqdn}.pem"
   
   # master
   $master_lib = "/var/lib/opscenter"
@@ -22,8 +22,8 @@ class cassandra_00::opsc::secrets {
   $pem_keyfile = "${master_ssl}/agentKeyStore.pem"
   
   # master [webserver]
-  $ssl_keyfile  = "/${master_ssl}/opscenter.key"
-  $ssl_certfile = "/${master_ssl}/opscenter.pem" 
+  $ssl_keyfile  = "${master_ssl}/opscenter.key"
+  $ssl_certfile = "${master_ssl}/opscenter.pem" 
 
   
   # agent
