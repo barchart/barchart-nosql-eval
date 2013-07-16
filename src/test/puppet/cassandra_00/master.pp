@@ -23,6 +23,8 @@ class cassandra_00::opsc::master  (
     $ssl_keyfile  = $secrets::ssl_keyfile
     $ssl_certfile = $secrets::ssl_certfile
     
+    $keystore_entry = $secrets::keystore_entry
+
     #
             
     $java_home_sh = "/etc/profile.d/java-home.sh"
@@ -66,6 +68,7 @@ class cassandra_00::opsc::master  (
         require => Package['opscenter'],
         subscribe =>[
           File[ "${master_config}", "${master_clusters_entry}", "${master_default}", "${java_home_sh}" ],
+          Java_ks["${keystore_entry}"],          
         ]
     }
               

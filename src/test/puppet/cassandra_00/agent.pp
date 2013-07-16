@@ -10,9 +10,9 @@ class cassandra_00::opsc::agent (
     include params
 
     $opscenter_host = $params::opscenter_host
-
-    $agent_keyfile = $secrets::agent_keyfile
-        
+    
+    $keystore_entry  = $secrets::keystore_entry
+    
     #
     
     # Resource default for Exec
@@ -76,7 +76,7 @@ class cassandra_00::opsc::agent (
         require => Exec[ "${agent_command}" ], 
         subscribe => [
           File[ "${agent_env_sh}", "${java_home_sh}" ],
-          File[ "${agent_keyfile}" ],
+          Java_ks["${keystore_entry}"],          
         ]
     }
     

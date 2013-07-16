@@ -18,6 +18,8 @@ incoming_interface = <%= @ipaddress %>
 # http://www.datastax.com/support-forums/topic/trouble-connecting-to-agent
 #
 use_ssl = true
+
+# hidden stomp props
 jks_keyfile = <%= @jks_keyfile %> 
 p12_keyfile = <%= @p12_keyfile %>
 pem_keyfile = <%= @pem_keyfile %>
@@ -70,6 +72,7 @@ seed_hosts = ""
 #
 #
 [authentication]
+
 # if this file does not exist, there will be no password protection. Use the
 # set_passwd.py tool (included with OpsCenter) to set passwords. This property will
 # default to /etc/opscenter/.passwd in packaged installations and ./passwds in
