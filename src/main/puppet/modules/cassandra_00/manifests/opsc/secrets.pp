@@ -28,8 +28,8 @@ class cassandra_00::opsc::secrets {
   # Make master cert based on puppet.
       
   file { "${ssl_certfile}" :
-    require    => File[ "${agent_lib}", "${agent_ssl}" ],
-    content => generate( "/bin/cat", "${ssl_cafile}", "${ssl_nodefile}" )
+    require => File[ "${agent_lib}", "${agent_ssl}" ],
+    content  => generate( "/bin/cat", "${ssl_nodefile}", "${ssl_cafile}"  )
   }
     
   # Make agent keystore based on puppet.
