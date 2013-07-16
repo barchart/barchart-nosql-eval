@@ -14,8 +14,7 @@ public class CertTest {
 
 		final String hostname = "opsc.cassandra.aws.barchart.com";
 		// final int port = 8443;
-		// final int port = 61620;
-		final int port = 61621;
+		final int port = 61620;
 
 		System.setProperty("javax.net.debug", "ssl");
 

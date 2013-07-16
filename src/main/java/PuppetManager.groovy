@@ -50,7 +50,7 @@ class PuppetManager {
 	}
 
 	static final REPO_SOURCE = "https://github.com/barchart/barchart-nosql-eval.git"
-	static final REPO_TARGET = "/etc/puppet/conf-repo"
+	static final REPO_TARGET = "/etc/puppet-repo"
 
 	/**
 	 * Configure git repository, links, and sync.
@@ -88,8 +88,8 @@ class PuppetManager {
 		}
 
 		/** Setup repo cron job. */
-		def local = "./src/main/resources/puppet.cron"
-		def remote = "/etc/cron.d/puppet.cron"
+		def local = "./src/main/resources/puppet-repo.cron"
+		def remote = "/etc/cron.d/puppet-repo"
 		RemoteShell.scpInto(master.host, local, remote);
 	}
 
