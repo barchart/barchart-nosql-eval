@@ -33,17 +33,32 @@ class cassandra_00::opsc::secrets {
   file { [ "${agent_lib}", "${agent_ssl}" ] : ensure => directory }
     
   # shared java store
+  $keystore_ca  = "ca:${jks_keyfile}"
+  $keystore_cert  = "cert:${jks_keyfile}"
   $keystore_entry  = "agent_key:${jks_keyfile}"
   $keystore_password = "opscenter"
 
   # master / jks
+  java_ks { "${keystore_ca}" :
+    trustcacerts => true,
+    ensure     => latest,
+    certificate => "${puppet_ca_file}",
+    password    => "${keystore_password}",
+  }
+  java_ks { "${keystore_cert}" :
+    trustcacerts => true,
+    ensure     => latest,
+    certificate => "${puppet_cert_file}",
+    password    => "${keystore_password}",
+  }
   java_ks { "${keystore_entry}" :
+    trustcacerts => true,
     ensure     => latest,
     certificate => "${puppet_cert_file}",
     private_key => "${puppet_pkey_file}",
     password    => "${keystore_password}",
   }
-
+  
   # master / p12
   openssl::export::p12 { "${p12_keyfile}" :
     ensure     => present,
