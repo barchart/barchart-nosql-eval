@@ -3,9 +3,9 @@
 
 #include helloworld
 
-include java00
+include java_00
 
-class { 'cassandra00' :
+class { 'cassandra_00' :
   
     cluster_name  => 'evaluator',
       
@@ -18,5 +18,9 @@ class { 'cassandra00' :
     
 }
 
-class { 'cassandra00::opsc::master' :
+class { 'cassandra_00::opsc::master' :
 }
+
+#class { 'cassandra_00::opsc::agent' :
+#}
+

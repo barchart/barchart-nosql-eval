@@ -44,14 +44,14 @@ node default {
   include ntp
   
   # Require common java.
-  include java00
+  include java_00
   
 }
 
 # Operations center.
 node "opsc.cassandra.aws.barchart.com" inherits default {
 
-  class { 'cassandra00::opsc::master' :
+  class { 'cassandra_00::opsc::master' :
   }
     
 }
@@ -59,12 +59,12 @@ node "opsc.cassandra.aws.barchart.com" inherits default {
 # EQX cassandra nodes.
 node /cassandra-.*.eqx.barchart.com/ inherits default {
   
-  class { 'cassandra00' :
+  class { 'cassandra_00' :
       max_heap_size => 2000m,
       heap_newsize  => 100m,
   }
 
-  class { 'cassandra00::opsc::agent' :
+  class { 'cassandra_00::opsc::agent' :
   }
     
 }
@@ -72,12 +72,12 @@ node /cassandra-.*.eqx.barchart.com/ inherits default {
 # AWS cassandra nodes.
 node /cassandra-.*.aws.barchart.com/ inherits default {
 
-  class { 'cassandra00' :
+  class { 'cassandra_00' :
       max_heap_size => 6000m,
       heap_newsize  => 300m,
   }
 
-  class { 'cassandra00::opsc::agent' :
+  class { 'cassandra_00::opsc::agent' :
   }
       
 }
