@@ -26,14 +26,14 @@ class cassandra_00::opsc::secrets {
   # Make agent keystore based on puppet.
   
   java_ks { "${keystore_agent_key}" :
-    ensure     => present,
+    ensure     => latest,
     private_key => "${ssl_keyfile}",
     certificate => "${ssl_certfile}",
     password    => "${opscenter_password}",
   }
   
   java_ks { "${keystore_opscenter_cert}" :
-    ensure     => present,
+    ensure     => latest,
     certificate => "${ssl_certfile}",
     password    => "${opscenter_password}",
   }
