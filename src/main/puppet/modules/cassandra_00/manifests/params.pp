@@ -194,9 +194,9 @@ class cassandra_00::params {
         default => $::cassandra_initial_token,
     }
 
-    $seeds = $::cassandra_seeds ? {
+    $seeds = $::cassandra_node_list ? {
         undef   => [],
-        default => $::cassandra_seeds,
+        default => $::cassandra_node_list,
     }
 
     $default_concurrent_reads = $::processorcount * 8
@@ -275,5 +275,30 @@ class cassandra_00::params {
       undef   => "",
       default => $::cassandra_topology_properties,
     }
+
+    $security_directory = $::cassandra_security_directory ? {
+        undef   => "/var/lib/cassandra/security",
+        default => $::cassandra_security_directory,
+    }
+        
+    # all/none/dc/rack
+    $internode_encryption = $::cassandra_internode_encryption ? {
+        undef   => "none",
+        default => $::cassandra_internode_encryption,
+    }
+
+    $internode_security = "${security_directory}/internode"
+
+    # contains the private and public key for the current node
+    $internode_keystore_location    = "${internode_security}/keystore.jks"
     
+    # 
+    $internode_keystore_password    = 'cassandra'
+  
+    # contains all the public keys for all the other nodes in the cluster
+    $internode_truststore_location  = "${internode_security}/truststore.jks"
+
+    # 
+    $internode_truststore_password  = 'cassandra'
+
 }

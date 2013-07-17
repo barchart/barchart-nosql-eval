@@ -37,6 +37,12 @@ class cassandra_00::config (
     $disk_failure_policy,
     $thread_stack_size,
 
+    $internode_encryption,
+    $internode_keystore_location,
+    $internode_keystore_password ,
+    $internode_truststore_location,
+    $internode_truststore_password,
+    
     ) {
     
     group { 'cassandra':

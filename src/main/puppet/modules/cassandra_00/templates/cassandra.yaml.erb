@@ -653,11 +653,11 @@ index_interval: 128
 # http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CreateKeystore
 #
 server_encryption_options:
-    internode_encryption: none
-    keystore: conf/.keystore
-    keystore_password: cassandra
-    truststore: conf/.truststore
-    truststore_password: cassandra
+    internode_encryption: <%= @internode_encryption %>
+    keystore:             <%= @internode_keystore_location %>
+    keystore_password:    <%= @internode_keystore_password %>
+    truststore:           <%= @internode_truststore_location %>
+    truststore_password:  <%= @internode_truststore_password %>
     # More advanced defaults below:
     # protocol: TLS
     # algorithm: SunX509

@@ -3,13 +3,8 @@
 #
 class cassandra_00::opsc::secrets {
   
-  # Puppet resources.    
-  $puppet_lib = "/var/lib/puppet"
-  $puppet_ssl = "${puppet_lib}/ssl"
-  $puppet_ca_file    = "${puppet_ssl}/certs/ca.pem"
-  $puppet_cert_file  = "${puppet_ssl}/certs/${fqdn}.pem"
-  $puppet_pkey_file  = "${puppet_ssl}/private_keys/${fqdn}.pem"
-  
+  include cassandra_00::secrets
+    
   # Master resources.
   $master_lib = "/var/lib/opscenter"
   $master_ssl = "${master_lib}/ssl"

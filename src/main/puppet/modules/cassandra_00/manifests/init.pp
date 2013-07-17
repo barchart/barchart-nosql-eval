@@ -47,7 +47,13 @@ class cassandra_00 (
     $internode_compression      = $params::internode_compression,
     $disk_failure_policy        = $params::disk_failure_policy,
     $thread_stack_size          = $params::thread_stack_size,
-    
+
+    $internode_encryption          = $params::internode_encryption,
+    $internode_keystore_location   = $params::internode_keystore_location,
+    $internode_keystore_password   = $params::internode_keystore_password,
+    $internode_truststore_location = $params::internode_truststore_location,
+    $internode_truststore_password = $params::internode_truststore_password,
+        
     ) inherits params {
   
 
@@ -157,7 +163,13 @@ class cassandra_00 (
         internode_compression      => $internode_compression,
         disk_failure_policy        => $disk_failure_policy,
         thread_stack_size          => $thread_stack_size,
-        
+
+        internode_encryption          => $internode_encryption,
+        internode_keystore_location   => $internode_keystore_location,
+        internode_keystore_password   => $internode_keystore_password,
+        internode_truststore_location => $internode_truststore_location,
+        internode_truststore_password => $internode_truststore_password,
+                
     }
 
     include service
