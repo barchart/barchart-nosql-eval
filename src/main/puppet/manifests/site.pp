@@ -5,6 +5,9 @@
 # Cluster name.
 $cassandra_cluster_name = "Evaluator"
 
+# Cluster node-to-node security.
+$cassandra_internode_encryption = "none"
+
 # Operations center.
 $cassandra_opscenter_host = "opsc.cassandra.aws.barchart.com"
 
