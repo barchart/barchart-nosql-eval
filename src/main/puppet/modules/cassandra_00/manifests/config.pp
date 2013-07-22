@@ -34,8 +34,8 @@ class cassandra_00::config () {
   }
 
   File {
-    owner   => $cassandra,
-    group   => $cassandra,
+    group   => $cassandraGroup,
+    owner   => $cassandraAgent,
     mode    => '0770',
   }
 
@@ -48,7 +48,7 @@ class cassandra_00::config () {
     $params::internode_security, 
     ] :
     ensure  => directory,
-    require => User[$cassandra],
+    require => User[ $cassandraAgent, $opscenterAgent ],
   }
   
   file { "${params::config_path}/cassandra-env.sh":
