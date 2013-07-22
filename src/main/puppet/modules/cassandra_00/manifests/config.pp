@@ -23,7 +23,7 @@ class cassandra_00::config () {
   user  { $cassandraAgent :
     gid => $cassandraGroup,
     ensure  => present,
-    require => Group[$cassandra],
+    require => Group[$cassandraGroup],
   }
 
   user  { $opscenterAgent :
