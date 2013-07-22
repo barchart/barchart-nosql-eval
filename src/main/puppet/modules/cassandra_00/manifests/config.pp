@@ -8,12 +8,19 @@ class cassandra_00::config () {
   
   # magical identity
   $cassandra = 'cassandra'
+  
+  $opscenterAgent = 'opscenter-agent'
 
   group { $cassandra :
     ensure  => present,
   }
 
   user  { $cassandra :
+    ensure  => present,
+    require => Group[$cassandra],
+  }
+
+  user  { $opscenterAgent :
     ensure  => present,
     require => Group[$cassandra],
   }
