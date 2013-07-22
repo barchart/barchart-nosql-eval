@@ -135,11 +135,11 @@ esac
 # times. If in doubt, and if you do not particularly want to tweak, go with
 # 100 MB per physical CPU core.
 
-<% unless @max_heap_size.empty? -%>
-MAX_HEAP_SIZE="<%= @max_heap_size %>"
+<% unless scope['params::max_heap_size'].empty? -%>
+MAX_HEAP_SIZE="<%= scope['params::max_heap_size'] %>"
 <% end -%>
-<% unless @heap_newsize.empty? -%>
-HEAP_NEWSIZE="<%= @heap_newsize %>"
+<% unless scope['params::heap_newsize'].empty? -%>
+HEAP_NEWSIZE="<%= scope['params::heap_newsize'] %>"
 <% end -%>
 
 if [ "x$MAX_HEAP_SIZE" = "x" ] && [ "x$HEAP_NEWSIZE" = "x" ]; then
@@ -153,7 +153,7 @@ fi
 
 # Specifies the default port over which Cassandra will be available for
 # JMX connections.
-JMX_PORT="<%= @jmx_port %>"
+JMX_PORT="<%= scope['params::jmx_port'] %>"
 
 
 # Here we create the arguments that will get passed to the jvm when
@@ -200,7 +200,7 @@ if [ "`uname`" = "Linux" ] ; then
     # be pooled anyway.) Only do so on Linux where it is known to be
     # supported.
     # u34 and greater need 180k
-    JVM_OPTS="$JVM_OPTS -Xss<%= @thread_stack_size %>k"
+    JVM_OPTS="$JVM_OPTS -Xss<%= scope['params::thread_stack_size'] %>k"
 fi
 
 # GC tuning options
@@ -255,6 +255,6 @@ JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.ssl=false"
 JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.authenticate=false" 
 JVM_OPTS="$JVM_OPTS $JVM_EXTRA_OPTS"
 
-<% @additional_jvm_opts.each do |jvm_opt| %>
-JVM_OPTS="$JVM_OPTS <%= jvm_opt %>"
+<% scope['params::additional_jvm_opts'].each do |jvm_opt| %>
+JVM_OPTS="$JVM_OPTS <%= scope['params::jvm_opt'] %>"
 <% end %>

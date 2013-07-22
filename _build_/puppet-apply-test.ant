@@ -30,7 +30,7 @@
 			<arg value="--debug" />
 			<arg value="--verbose" />
 			<arg value="--ignorecache" />
-			
+
 			<arg value="--color=false" />
 
 			<arg value="--confdir=${basedir}/src/main/puppet" />

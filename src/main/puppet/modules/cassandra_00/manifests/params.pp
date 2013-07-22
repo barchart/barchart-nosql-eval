@@ -196,9 +196,9 @@ class cassandra_00::params {
         default => $cassandra_00::initial_token,
     }
 
-    $seeds = $cassandra_00::node_list ? {
+    $seeds = $cassandra_00::seeds ? {
         undef   => [],
-        default => $cassandra_00::node_list,
+        default => $cassandra_00::seeds,
     }
 
     $default_concurrent_reads = $::processorcount * 8
