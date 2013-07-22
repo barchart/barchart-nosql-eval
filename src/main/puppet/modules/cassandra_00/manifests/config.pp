@@ -16,11 +16,13 @@ class cassandra_00::config () {
   }
 
   user  { $cassandra :
+    gid => $cassandra,
     ensure  => present,
     require => Group[$cassandra],
   }
 
   user  { $opscenterAgent :
+    gid => $cassandra,
     ensure  => present,
     require => Group[$cassandra],
   }
