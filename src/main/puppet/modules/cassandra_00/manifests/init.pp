@@ -85,7 +85,4 @@ class cassandra_00 (
   ) {
 
     notify { "### ${seeds}" : }    
-
-    include apply    
-
 }
