@@ -2,182 +2,90 @@
 #
 #
 class cassandra_00 (
-  
-    $package_name               = $params::package_name,
-    $version                    = $params::version,
-    $service_name               = $params::service_name,
-    $config_path                = $params::config_path,
-    $include_repo               = $params::include_repo,
-    $repo_name                  = $params::repo_name,
-    $repo_baseurl               = $params::repo_baseurl,
-    $repo_gpgkey                = $params::repo_gpgkey,
-    $repo_repos                 = $params::repo_repos,
-    $repo_release               = $params::repo_release,
-    $repo_pin                   = $params::repo_pin,
-    $repo_gpgcheck              = $params::repo_gpgcheck,
-    $repo_enabled               = $params::repo_enabled,
-    $max_heap_size              = $params::max_heap_size,
-    $heap_newsize               = $params::heap_newsize,
-    $jmx_port                   = $params::jmx_port,
-    $additional_jvm_opts        = $params::additional_jvm_opts,
-    $cluster_name               = $params::cluster_name,
-    $listen_address             = $params::listen_address,
-    $start_native_transport     = $params::start_native_transport,
-    $start_rpc                  = $params::start_rpc,
-    $rpc_address                = $params::rpc_address,
-    $rpc_port                   = $params::rpc_port,
-    $rpc_server_type            = $params::rpc_server_type,
-    $native_transport_port      = $params::native_transport_port,
-    $storage_port               = $params::storage_port,
-    $ssl_storage_port           = $params::ssl_storage_port,
-    $partitioner                = $params::partitioner,
-    $data_file_directories      = $params::data_file_directories,
-    $commitlog_directory        = $params::commitlog_directory,
-    $saved_caches_directory     = $params::saved_caches_directory,
-    $initial_token              = $params::initial_token,
-    $num_tokens                 = $params::num_tokens,
-    $seeds                      = $params::seeds,
-    $concurrent_reads           = $params::concurrent_reads,
-    $concurrent_writes          = $params::concurrent_writes,
-    $incremental_backups        = $params::incremental_backups,
-    $snapshot_before_compaction = $params::snapshot_before_compaction,
-    $auto_snapshot              = $params::auto_snapshot,
-    $multithreaded_compaction   = $params::multithreaded_compaction,
-    $endpoint_snitch            = $params::endpoint_snitch,
-    $internode_compression      = $params::internode_compression,
-    $disk_failure_policy        = $params::disk_failure_policy,
-    $thread_stack_size          = $params::thread_stack_size,
 
-    $internode_encryption          = $params::internode_encryption,
-    $internode_keystore_location   = $params::internode_keystore_location,
-    $internode_keystore_password   = $params::internode_keystore_password,
-    $internode_truststore_location = $params::internode_truststore_location,
-    $internode_truststore_password = $params::internode_truststore_password,
-        
-    ) inherits params {
-  
+  $opscenter_host = $::cassandra_opscenter_host,
 
-    # Validate input parameters
-  
-    validate_bool($include_repo)
-
-    validate_absolute_path($commitlog_directory)
-    validate_absolute_path($saved_caches_directory)
-
-    validate_string($cluster_name)
-    validate_string($partitioner)
-    validate_string($initial_token)
-    validate_string($endpoint_snitch)
-
-    validate_re($start_rpc, '^(true|false)$')
-    validate_re($start_native_transport, '^(true|false)$')
-    validate_re($rpc_server_type, '^(hsha|sync|async)$')
-    validate_re($incremental_backups, '^(true|false)$')
-    validate_re($snapshot_before_compaction, '^(true|false)$')
-    validate_re($auto_snapshot, '^(true|false)$')
-    validate_re($multithreaded_compaction, '^(true|false)$')
-    validate_re("${concurrent_reads}", '^[0-9]+$')
-    validate_re("${concurrent_writes}", '^[0-9]+$')
-    validate_re("${num_tokens}", '^[0-9]+$')
-    validate_re($internode_compression, '^(all|dc|none)$')
-    validate_re($disk_failure_policy, '^(stop|best_effort|ignore)$')
-    validate_re("${thread_stack_size}", '^[0-9]+$')
-
-    validate_array($additional_jvm_opts)
-    validate_array($seeds)
-    validate_array($data_file_directories)
-
-    if(!is_integer($jmx_port)) {
-        fail('jmx_port must be a port number between 1 and 65535')
-    }
-
-    if(!is_ip_address($listen_address)) {
-        fail('listen_address must be an IP address')
-    }
-
-    if(!is_ip_address($rpc_address)) {
-        fail('rpc_address must be an IP address')
-    }
-
-    if(!is_integer($rpc_port)) {
-        fail('rpc_port must be a port number between 1 and 65535')
-    }
-
-    if(!is_integer($native_transport_port)) {
-        fail('native_transport_port must be a port number between 1 and 65535')
-    }
-
-    if(!is_integer($storage_port)) {
-        fail('storage_port must be a port number between 1 and 65535')
-    }
-
-    if(empty($seeds)) {
-        fail('seeds must not be empty')
-    }
-
-    if(empty($data_file_directories)) {
-        fail('data_file_directories must not be empty')
-    }
-
-    if(!empty($initial_token)) {
-        fail("Starting with Cassandra 1.2 you shouldn't set an initial_token but set num_tokens accordingly.")
-    }
-
-    # Anchors for containing the implementation class
-    
-    anchor { 'begin': }
-
-    include install
-
-    class { 'config':
-        config_path                => $config_path,
-        max_heap_size              => $max_heap_size,
-        heap_newsize               => $heap_newsize,
-        jmx_port                   => $jmx_port,
-        additional_jvm_opts        => $additional_jvm_opts,
-        cluster_name               => $cluster_name,
-        start_native_transport     => $start_native_transport,
-        start_rpc                  => $start_rpc,
-        listen_address             => $listen_address,
-        broadcast_address          => $broadcast_address,
-        rpc_address                => $rpc_address,
-        rpc_port                   => $rpc_port,
-        rpc_server_type            => $rpc_server_type,
-        native_transport_port      => $native_transport_port,
-        storage_port               => $storage_port,
-        ssl_storage_port           => $ssl_storage_port,
-        partitioner                => $partitioner,
-        data_file_directories      => $data_file_directories,
-        commitlog_directory        => $commitlog_directory,
-        saved_caches_directory     => $saved_caches_directory,
-        initial_token              => $initial_token,
-        num_tokens                 => $num_tokens,
-        seeds                      => $seeds,
-        concurrent_reads           => $concurrent_reads,
-        concurrent_writes          => $concurrent_writes,
-        incremental_backups        => $incremental_backups,
-        snapshot_before_compaction => $snapshot_before_compaction,
-        auto_snapshot              => $auto_snapshot,
-        multithreaded_compaction   => $multithreaded_compaction,
-        endpoint_snitch            => $endpoint_snitch,
-        internode_compression      => $internode_compression,
-        disk_failure_policy        => $disk_failure_policy,
-        thread_stack_size          => $thread_stack_size,
-
-        internode_encryption          => $internode_encryption,
-        internode_keystore_location   => $internode_keystore_location,
-        internode_keystore_password   => $internode_keystore_password,
-        internode_truststore_location => $internode_truststore_location,
-        internode_truststore_password => $internode_truststore_password,
-                
-    }
-
-    include service
-
-    anchor { 'end': }
-
-    Anchor['begin'] -> Class['install'] -> Class['config'] 
-    ~> 
-    Class['service'] -> Anchor['end']
+  $cluster_name = $::cassandra_cluster_name,
       
+  $package_name = $::cassandra_package_name,
+  $version = $::cassandra_version,
+  
+  $include_repo = $::cassandra_include_repo,
+  $repo_name = $::cassandra_repo_name,
+  $repo_baseurl = $::cassandra_repo_baseurl,
+  $repo_gpgkey = $::cassandra_repo_gpgkey,
+  $repo_repos = $::cassandra_repo_repos,
+  $repo_release = $::cassandra_repo_release,
+  $repo_pin = $::cassandra_repo_pin,
+  $repo_gpgcheck = $::cassandra_repo_gpgcheck,
+  $repo_enabled = $::cassandra_repo_enabled,
+    
+  $service_name = $::cassandra_service_name,
+    
+  $config_path = $::cassandra_config_path,
+
+  $data_file_directory = $::cassandra_data_file_directory,
+  $commit_log_directory = $::cassandra_commit_log_directory,
+  $saved_caches_directory = $::cassandra_saved_caches_directory,
+    
+  $max_heap_size = $::cassandra_max_heap_size,
+  $heap_newsize = $::cassandra_heap_newsize,
+  $jmx_port = $::cassandra_jmx_port,
+  $additional_jvm_opts = $::cassandra_additional_jvm_opts,
+  
+  $listen_address = $::cassandra_listen_address,
+  $broadcast_address = $::cassandra_broadcast_address,
+  $rpc_address = $::cassandra_rpc_address,
+  $rpc_port = $::cassandra_rpc_port,
+  $rpc_server_type = $::cassandra_rpc_server_type,
+  $storage_port = $::cassandra_storage_port,
+  $ssl_storage_port = $::cassandra_ssl_storage_port,
+  
+  $partitioner = $::cassandra_partitioner,
+    
+  $initial_token = $::cassandra_initial_token,
+    
+  $seeds = $::cassandra_node_list,
+    
+  $default_concurrent_reads = $::cassandra_default_concurrent_reads,
+  $concurrent_reads = $::cassandra_concurrent_reads,
+  $default_concurrent_writes = $::cassandra_default_concurrent_writes,
+  $concurrent_writes = $::cassandra_concurrent_writes,
+    
+  $incremental_backups = $::cassandra_incremental_backups,
+  $snapshot_before_compaction = $::cassandra_snapshot_before_compaction,
+  $auto_snapshot = $::cassandra_auto_snapshot,
+  
+  $multithreaded_compaction = $::cassandra_multithreaded_compaction,
+  $endpoint_snitch = $::cassandra_endpoint_snitch,
+  $internode_compression = $::cassandra_internode_compression,
+  $disk_failure_policy = $::cassandra_disk_failure_policy,
+  
+  $start_native_transport = $::cassandra_start_native_transport,
+  $native_transport_port = $::cassandra_native_transport_port,
+  $start_rpc = $::cassandra_start_rpc,
+  
+  $num_tokens = $::cassandra_num_tokens,
+    
+  $thread_stack_size = $::cassandra_thread_stack_size,
+  
+  $topology_properties = $::cassandra_topology_properties,
+  
+  $security_directory = $::cassandra_security_directory,
+
+  $internode_encryption = $::cassandra_internode_encryption,
+  
+  $internode_security = $::cassandra_internode_security,
+  
+  $internode_keystore_location    = $::cassandra_internode_keystore_location,
+  $internode_keystore_password    = $::cassandra_internode_keystore_password,
+  $internode_truststore_location  = $::cassandra_internode_truststore_location,
+  $internode_truststore_password  = $::cassandra_internode_truststore_password,
+      
+  ) {
+
+    notify { "### ${seeds}" : }    
+
+    include apply    
+
 }

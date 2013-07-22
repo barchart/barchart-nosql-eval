@@ -11,7 +11,7 @@
 
 # The name of the cluster. This is mainly used to prevent machines in
 # one logical cluster from joining another.
-cluster_name: '<%= @cluster_name %>'
+cluster_name: <%= scope['params::cluster_name'] %>
 
 # This defines the number of tokens randomly assigned to this node on the ring
 # The more tokens, relative to other nodes, the larger the proportion of data
@@ -25,7 +25,7 @@ cluster_name: '<%= @cluster_name %>'
 #
 # If you already have a cluster with 1 token per node, and wish to migrate to
 # multiple tokens per node, see http://wiki.apache.org/cassandra/Operations
-num_tokens: <%= @num_tokens %>
+num_tokens: <%= scope['params::num_tokens'] %>
 
 # If you haven't specified num_tokens, or have set it to the default of 1 then
 # you should always specify InitialToken when setting up a production
@@ -38,7 +38,7 @@ num_tokens: <%= @num_tokens %>
 # the heaviest-loaded existing node.  If there is no load information
 # available, such as is the case with a new cluster, it will pick
 # a random token, which will lead to hot spots.
-initial_token: <%= @initial_token %>
+initial_token: <%= scope['params::initial_token'] %>
 
 # See http://wiki.apache.org/cassandra/HintedHandoff
 hinted_handoff_enabled: true
@@ -104,15 +104,14 @@ permissions_validity_in_ms: 2000
 #
 # See http://wiki.apache.org/cassandra/Operations for more on
 # partitioners and token selection.
-partitioner: <%= @partitioner %>
+partitioner: <%= scope['params::partitioner'] %>
 
 # directories where Cassandra should store data on disk.
-data_file_directories:<% @data_file_directories.each do |data_file_directory| %>
-    - <%= data_file_directory %>
-<% end %>
+data_file_directories:
+    - <%= scope['params::data_file_directory'] %>
 
 # commit log
-commitlog_directory: <%= @commitlog_directory %>
+commitlog_directory: <%= scope['params::commit_log_directory'] %>
 
 # policy for data disk failures:
 # stop: shut down gossip and Thrift, leaving the node effectively dead, but
@@ -121,7 +120,7 @@ commitlog_directory: <%= @commitlog_directory %>
 #              remaining available sstables.  This means you WILL see obsolete
 #              data at CL.ONE!
 # ignore: ignore fatal errors and let requests fail, as in pre-1.2 Cassandra
-disk_failure_policy: <%= @disk_failure_policy %>
+disk_failure_policy: <%= scope['params::disk_failure_policy'] %>
 
 # Maximum size of the key cache in memory.
 #
@@ -190,7 +189,7 @@ row_cache_save_period: 0
 row_cache_provider: SerializingCacheProvider
 
 # saved caches
-saved_caches_directory: <%= @saved_caches_directory %>
+saved_caches_directory: <%= scope['params::saved_caches_directory'] %>
 
 # commitlog_sync may be either "periodic" or "batch." 
 # When in batch mode, Cassandra won't ack writes until the commit log
@@ -229,7 +228,7 @@ seed_provider:
       parameters:
           # seeds is actually a comma-delimited list of addresses.
           # Ex: "<ip1>,<ip2>,<ip3>"
-          - seeds: <%= @seeds.join(',') %>
+          - seeds: <%= scope['params::seeds.join(',')'] %>
 
 # emergency pressure valve: each time heap usage after a full (CMS)
 # garbage collection is above this fraction of the max, Cassandra will
@@ -265,8 +264,8 @@ reduce_cache_capacity_to: 0.6
 # On the other hand, since writes are almost never IO bound, the ideal
 # number of "concurrent_writes" is dependent on the number of cores in
 # your system; (8 * number_of_cores) is a good rule of thumb.
-concurrent_reads: <%= @concurrent_reads %>
-concurrent_writes: <%= @concurrent_writes %>
+concurrent_reads: <%= scope['params::concurrent_reads'] %>
+concurrent_writes: <%= scope['params::concurrent_writes'] %>
 
 # Total memory to use for memtables.  Cassandra will flush the largest
 # memtable when this much memory is used.
@@ -304,11 +303,11 @@ trickle_fsync: false
 trickle_fsync_interval_in_kb: 10240
 
 # TCP port, for commands and data
-storage_port: <%= @storage_port %>
+storage_port: <%= scope['params::storage_port'] %>
 
 # SSL port, for encrypted communication.  Unused unless enabled in
 # encryption_options
-ssl_storage_port: <%= @ssl_storage_port %>
+ssl_storage_port: <%= scope['params::ssl_storage_port'] %>
 
 # Address to bind to and tell other Cassandra nodes to connect to. You
 # _must_ change this if you want multiple nodes to be able to
@@ -320,11 +319,11 @@ ssl_storage_port: <%= @ssl_storage_port %>
 # address associated with the hostname (it might not be).
 #
 # Setting this to 0.0.0.0 is always wrong.
-listen_address: <%= @listen_address %>
+listen_address: <%= scope['params::listen_address'] %>
 
 # Address to broadcast to other Cassandra nodes
 # Leaving this blank will set it to the same value as listen_address
-broadcast_address: <%= @broadcast_address %>
+broadcast_address: <%= scope['params::broadcast_address'] %>
 
 # Internode authentication backend, implementing IInternodeAuthenticator;
 # used to allow/disallow connections from peer nodes.
@@ -335,9 +334,9 @@ broadcast_address: <%= @broadcast_address %>
 # transport is considered beta.
 # Please note that the address on which the native transport is bound is the
 # same as the rpc_address. The port however is different and specified below.
-start_native_transport: <%= @start_native_transport %>
+start_native_transport: <%= scope['params::start_native_transport'] %>
 # port for the CQL native transport to listen for clients on
-native_transport_port: <%= @native_transport_port %>
+native_transport_port: <%= scope['params::native_transport_port'] %>
 # The minimum and maximum threads for handling requests when the native
 # transport is used. The meaning is those is similar to the one of
 # rpc_min_threads and rpc_max_threads, though the default differ slightly and
@@ -346,7 +345,7 @@ native_transport_port: <%= @native_transport_port %>
 # native_transport_max_threads: 128
 
 # Whether to start the thrift rpc server.
-start_rpc: <%= @start_rpc %>
+start_rpc: <%= scope['params::start_rpc'] %>
 
 # The address to bind the Thrift RPC service to -- clients connect
 # here. Unlike ListenAddress above, you *can* specify 0.0.0.0 here if
@@ -354,9 +353,9 @@ start_rpc: <%= @start_rpc %>
 # 
 # Leaving this blank has the same effect it does for ListenAddress,
 # (i.e. it will be based on the configured hostname of the node).
-rpc_address: <%= @rpc_address %>
+rpc_address: <%= scope['params::rpc_address'] %>
 # port for Thrift to listen for clients on
-rpc_port: <%= @rpc_port %>
+rpc_port: <%= scope['params::rpc_port'] %>
 
 # enable or disable keepalive on rpc connections
 rpc_keepalive: true
@@ -378,7 +377,7 @@ rpc_keepalive: true
 #
 # Alternatively,  can provide your own RPC server by providing the fully-qualified class name
 # of an o.a.c.t.TServerFactory that can create an instance of it.
-rpc_server_type: <%= @rpc_server_type %>
+rpc_server_type: <%= scope['params::rpc_server_type'] %>
 
 # Uncomment rpc_min|max_thread to set request pool size limits.
 #
@@ -420,19 +419,19 @@ thrift_max_message_length_in_mb: 16
 # flushed or streamed locally in a backups/ subdirectory of the
 # Keyspace data.  Removing these links is the operator's
 # responsibility.
-incremental_backups: <%= @incremental_backups %>
+incremental_backups: <%= scope['params::incremental_backups'] %>
 
 # Whether or not to take a snapshot before each compaction.  Be
 # careful using this option, since Cassandra won't clean up the
 # snapshots for you.  Mostly useful if you're paranoid when there
 # is a data format change.
-snapshot_before_compaction: <%= @snapshot_before_compaction %>
+snapshot_before_compaction: <%= scope['params::snapshot_before_compaction'] %>
 
 # Whether or not a snapshot is taken of the data before keyspace truncation
 # or dropping of column families. The STRONGLY advised default of true 
 # should be used to provide data safety. If you set this flag to false, you will
 # lose data on truncation or drop.
-auto_snapshot: <%= @auto_snapshot %>
+auto_snapshot: <%= scope['params::auto_snapshot'] %>
 
 # Add column indexes to a row after its contents reach this size.
 # Increase if your column values are large, or if you have a very large
@@ -466,7 +465,7 @@ in_memory_compaction_limit_in_mb: 64
 # This is usually only useful for SSD-based hardware: otherwise, 
 # your concern is usually to get compaction to do LESS i/o (see:
 # compaction_throughput_mb_per_sec), not more.
-multithreaded_compaction: <%= @multithreaded_compaction %>
+multithreaded_compaction: <%= scope['params::multithreaded_compaction'] %>
 
 # Throttles compaction to the given total throughput across the entire
 # system. The faster you insert data, the faster you need to compact in
@@ -569,7 +568,7 @@ cross_node_timeout: false
 #
 # You can use a custom Snitch by setting this to the full class name
 # of the snitch, which will be assumed to be on your classpath.
-endpoint_snitch: <%= @endpoint_snitch %>
+endpoint_snitch: <%= scope['params::endpoint_snitch'] %>
 
 # controls how often to perform the more expensive part of host score
 # calculation
@@ -653,11 +652,11 @@ index_interval: 128
 # http://download.oracle.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html#CreateKeystore
 #
 server_encryption_options:
-    internode_encryption: <%= @internode_encryption %>
-    keystore:             <%= @internode_keystore_location %>
-    keystore_password:    <%= @internode_keystore_password %>
-    truststore:           <%= @internode_truststore_location %>
-    truststore_password:  <%= @internode_truststore_password %>
+    internode_encryption: <%= scope['params::internode_encryption'] %>
+    keystore:             <%= scope['params::internode_keystore_location'] %>
+    keystore_password:    <%= scope['params::internode_keystore_password'] %>
+    truststore:           <%= scope['params::internode_truststore_location'] %>
+    truststore_password:  <%= scope['params::internode_truststore_password'] %>
     # More advanced defaults below:
     # protocol: TLS
     # algorithm: SunX509
@@ -685,7 +684,7 @@ client_encryption_options:
 # can be:  all  - all traffic is compressed
 #          dc   - traffic between different datacenters is compressed
 #          none - nothing is compressed.
-internode_compression: <%= @internode_compression %>
+internode_compression: <%= scope['params::internode_compression'] %>
 
 # Enable or disable tcp_nodelay for inter-dc communication.
 # Disabling it will result in larger (but fewer) network packets being sent,

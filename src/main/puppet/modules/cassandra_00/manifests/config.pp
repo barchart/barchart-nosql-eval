@@ -1,85 +1,60 @@
 #
 #
 #
-class cassandra_00::config (
+class cassandra_00::config () {
 
-    $config_path,
-    $max_heap_size,
-    $heap_newsize,
-    $jmx_port,
-    $additional_jvm_opts,
-    $cluster_name,
-    $start_native_transport,
-    $start_rpc,
-    $listen_address,
-    $broadcast_address,
-    $rpc_address,
-    $rpc_port,
-    $rpc_server_type,
-    $native_transport_port,
-    $storage_port,
-    $ssl_storage_port,
-    $partitioner,
-    $data_file_directories,
-    $commitlog_directory,
-    $saved_caches_directory,
-    $initial_token,
-    $num_tokens,
-    $seeds,
-    $concurrent_reads,
-    $concurrent_writes,
-    $incremental_backups,
-    $snapshot_before_compaction,
-    $auto_snapshot,
-    $multithreaded_compaction,
-    $endpoint_snitch,
-    $internode_compression,
-    $disk_failure_policy,
-    $thread_stack_size,
+  include params
+  include install
+  
+  # magical identity
+  $cassandra = 'cassandra'
 
-    $internode_encryption,
-    $internode_keystore_location,
-    $internode_keystore_password ,
-    $internode_truststore_location,
-    $internode_truststore_password,
-    
-    ) {
-    
-    group { 'cassandra':
-        ensure  => present,
-        require => Class['install'],
-    }
+  group { $cassandra :
+    ensure  => present,
+  }
 
-    user { 'cassandra':
-        ensure  => present,
-        require => Group['cassandra'],
-    }
+  user  { $cassandra :
+    ensure  => present,
+    require => Group[$cassandra],
+  }
 
-    File {
-        owner   => 'cassandra',
-        group   => 'cassandra',
-        mode    => '0644',
-        require => Class['install'],
-    }
+  File {
+    owner   => $cassandra,
+    group   => $cassandra,
+    mode    => '0700',
+  }
 
-    file { $data_file_directories:
-        ensure  => directory,
-    }
+  file { [
+    $params::var_lib_directory,
+    $params::data_file_directory,
+    $params::commit_log_directory,
+    $params::saved_caches_directory,
+    $params::security_directory, 
+    $params::internode_security, 
+    ] :
+    ensure  => directory,
+    require => User[$cassandra],
+  }
+  
+  file { "${params::config_path}/cassandra-env.sh":
+      ensure  => file,
+      content => template("${module_name}/cassandra-env.sh.erb"),
+  }
 
-    file { "${config_path}/cassandra-env.sh":
-        ensure  => file,
-        content => template("${module_name}/cassandra-env.sh.erb"),
-    }
+  file { "${params::config_path}/cassandra.yaml":
+      ensure  => file,
+      content => template("${module_name}/cassandra.yaml.erb"),
+  }
+  
+  # PropertiesSnitch
+  file { "${params::config_path}/cassandra-topology.properties" :
+      content => $params::topology_properties,
+  }    
 
-    file { "${config_path}/cassandra.yaml":
-        ensure  => file,
-        content => template("${module_name}/cassandra.yaml.erb"),
-    }
-    
-    # TODO parameterize
-    file { "/etc/dse/dse-env.sh":
-        ensure  => file,
-        content => template("${module_name}/dse-env.sh.erb"),
-    }
-      
+  # TODO parameterize
+  file { "/etc/dse/dse-env.sh":
+      ensure  => file,
+      content => template("${module_name}/dse-env.sh.erb"),
+  }
+  
 }

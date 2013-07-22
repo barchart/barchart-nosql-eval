@@ -1,19 +1,18 @@
 #
 #
 #
-class cassandra_00::service (
+class cassandra_00::service (){
 
-    $service_name = $params::service_name,
-
-  ){
+  include params
+  include config
     
-    service { $service_name:
-        ensure     => running,
-        enable     => true,
-        hasstatus  => true,
-        hasrestart => true,
-        subscribe   => Class['config'],
-        require    => Class['config'],
-    }
+  service { $params::service_name :
+      ensure     => running,
+      enable     => true,
+      hasstatus  => true,
+      hasrestart => true,
+      subscribe   => Class['config'],
+      require    => Class['config'],
+  }
     
 }
