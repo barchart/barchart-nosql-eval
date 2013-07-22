@@ -28,7 +28,7 @@ class cassandra_00::config () {
 
   user  { $opscenterAgent :
     gid => $opscenterGroup,
-    groups => [$cassandraGroup, $opscenterGroup], 
+    groups => [ $cassandraGroup, $opscenterGroup ], 
     ensure  => present,
     require => Group[ $cassandraGroup, $opscenterGroup ],
   }
