@@ -6,25 +6,31 @@ class cassandra_00::config () {
   include params
   include install
   
-  # magical identity
-  $cassandra = 'cassandra'
+  $cassandraGroup = 'cassandra'
+  $cassandraAgent = 'cassandra'
   
+  $opscenterGroup = 'opscenter-admin'
   $opscenterAgent = 'opscenter-agent'
 
-  group { $cassandra :
+  group { $cassandraGroup :
+    ensure  => present,
+  }
+  
+  group { $opscenterGroup :
     ensure  => present,
   }
 
-  user  { $cassandra :
-    gid => $cassandra,
+  user  { $cassandraAgent :
+    gid => $cassandraGroup,
     ensure  => present,
     require => Group[$cassandra],
   }
 
   user  { $opscenterAgent :
-    gid => $cassandra,
+    gid => $opscenterGroup,
+    groups => [$cassandra, $opscenterGroup], 
     ensure  => present,
-    require => Group[$cassandra],
+    require => Group[ $cassandra, $opscenterGroup ],
   }
 
   File {
