@@ -21,7 +21,7 @@ class cassandra_00::config () {
   File {
     owner   => $cassandra,
     group   => $cassandra,
-    mode    => '0700',
+    mode    => '0770',
   }
 
   file { [
