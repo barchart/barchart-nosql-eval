@@ -176,7 +176,10 @@ class cassandra_00::params {
         default => $cassandra_00::partitioner,
     }
     
-    $var_lib_directory = "/var/lib/cassandra"
+    $var_lib_directory = $$cassandra_00::var_lib_directory ? {
+      undef   => "/var/lib/cassandra",
+      default => $cassandra_00::var_lib_directory,
+    }
 
     $data_file_directory = $cassandra_00::data_file_directory ? {
         undef   => "${var_lib_directory}/data_file",
