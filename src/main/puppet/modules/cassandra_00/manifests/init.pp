@@ -6,7 +6,9 @@ class cassandra_00 (
   $opscenter_host = $::cassandra_opscenter_host,
 
   $cluster_name = $::cassandra_cluster_name,
-      
+  
+  $var_lib_directory = $::cassandra_var_lib_directory,    
+  
   $package_name = $::cassandra_package_name,
   $version = $::cassandra_version,
   
