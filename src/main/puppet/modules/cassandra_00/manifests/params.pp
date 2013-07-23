@@ -135,8 +135,8 @@ class cassandra_00::params {
 
     # 
     $listen_address = $cassandra_00::listen_address ? {
-#        undef   => $ipaddress, # from facter
-        undef   => "0.0.0.0", # need "all" for eqx
+        undef   => $ipaddress, # from facter
+#        undef   => "0.0.0.0", # need "all" for eqx
         default => $cassandra_00::listen_address,
     }
 
@@ -146,8 +146,8 @@ class cassandra_00::params {
     }
     
     $rpc_address = $cassandra_00::rpc_address ? {
-#        undef   => $ipaddress, # from facter
-        undef   => "0.0.0.0", # need "all" for eqx
+        undef   => $ipaddress, # from facter
+#        undef   => "0.0.0.0", # need "all" for eqx
         default => $cassandra_00::rpc_address,
     }
 
