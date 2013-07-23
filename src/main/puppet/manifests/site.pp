@@ -64,11 +64,11 @@ node "opsc.cassandra.aws.barchart.com" inherits default {
 # EQX cassandra nodes.
 node /cassandra-.*.eqx.barchart.com/ inherits default {
   
-  class { 'cassandra_00' :
+  class { "cassandra_00" :
       max_heap_size => 2000m,
       heap_newsize  => 100m,
   }
-  class { 'cassandra_00::apply' : }
+  class { "cassandra_00::apply" : }
   class { "cassandra_00::opsc::agent" : }
   class { "cassandra_00::node::member" : }
     
@@ -83,7 +83,7 @@ node /cassandra-.*.aws.barchart.com/ inherits default {
       heap_newsize  => 300m,
       var_lib_directory => '/mnt/cassandra', 
   }
-  class { 'cassandra_00::apply' : }
+  class { "cassandra_00::apply" : }
   class { "cassandra_00::opsc::agent" : }
   class { "cassandra_00::node::member" : }
       
