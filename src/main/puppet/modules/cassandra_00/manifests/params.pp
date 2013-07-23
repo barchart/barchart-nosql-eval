@@ -284,7 +284,7 @@ class cassandra_00::params {
     }
 
     $security_directory = $cassandra_00::security_directory ? {
-        undef   => "/var/lib/cassandra/security",
+        undef   => "${var_lib_directory}/security",
         default => $cassandra_00::security_directory,
     }
         
