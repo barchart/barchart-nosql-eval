@@ -76,12 +76,11 @@ node /cassandra-.*.eqx.barchart.com/ inherits default {
 
 # AWS cassandra nodes.
 node /cassandra-.*.aws.barchart.com/ inherits default {
-
   
   class { "cassandra_00" :
       max_heap_size => 6000m,
       heap_newsize  => 300m,
-      var_lib_directory => '/mnt/cassandra', 
+      var_lib_directory => "/mnt/cassandra", 
   }
   class { "cassandra_00::apply" : }
   class { "cassandra_00::opsc::agent" : }
