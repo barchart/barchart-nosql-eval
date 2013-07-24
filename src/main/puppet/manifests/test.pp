@@ -45,3 +45,11 @@ default=us-east-1:az1
 #  class { 'cassandra_00::opsc::agent' : }
 #  class { 'cassandra_00::node::member' : }
 
+#    limits::fragment {
+#      "*/soft/nofile":
+#        value => "99999";
+#      "*/hard/nofile":
+#        value => "99999";
+#    }
+
+    

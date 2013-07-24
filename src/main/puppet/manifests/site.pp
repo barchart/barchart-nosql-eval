@@ -43,6 +43,13 @@ default=us-east-1:az1
 # Default setup.
 node default {
 
+  limits::fragment {
+    "*/soft/nofile":
+      value => "1024";
+    "*/hard/nofile":
+      value => "8192";
+  }
+    
   # Require time sync.
   include ntp
   
