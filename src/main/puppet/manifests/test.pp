@@ -52,4 +52,18 @@ default=us-east-1:az1
 #        value => "99999";
 #    }
 
-    
+    sysctl { 'vm.swappiness':
+      ensure    => 'present',
+      permanent => 'yes',
+      value     => '0',
+    }
+    sysctl { 'net.core.rmem_max':
+      ensure    => 'present',
+      permanent => 'yes',
+      value     => '16777216',
+    }
+    sysctl { 'net.core.wmem_max':
+      ensure    => 'present',
+      permanent => 'yes',
+      value     => '16777216',
+    }

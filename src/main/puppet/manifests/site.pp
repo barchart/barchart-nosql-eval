@@ -55,6 +55,25 @@ node default {
   
   # Require common java.
   include java_00
+
+  # Disable java heap swap.  
+  sysctl { 'vm.swappiness':
+    ensure    => 'present',
+    permanent => 'yes',
+    value     => '0',
+  }
+  
+  # Increase r/w socket buffer.
+  sysctl { 'net.core.rmem_max':
+    ensure    => 'present',
+    permanent => 'yes',
+    value     => '16777216',
+  }
+  sysctl { 'net.core.wmem_max':
+    ensure    => 'present',
+    permanent => 'yes',
+    value     => '16777216',
+  }
   
 }
 
