@@ -5,7 +5,7 @@ scalable persistence store
 
 General reinstall:
 
-`
+```
 service puppetmaster stop
 service puppet stop
 service opscenterd stop
@@ -15,7 +15,7 @@ apt-get purge opscenter
 service puppetmaster start
 service puppet start
 
-`
+```
 
 # make sure the link to ops center is correct (i.e host machine of opscenter)
 
