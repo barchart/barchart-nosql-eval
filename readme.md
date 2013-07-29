@@ -33,6 +33,10 @@ barchart-nosql-eval: contains puppet configuration for everything we need starti
 
 /main/java/puppet/files/site.pp
 
-# It is critical we guarantee disk space for Cassandra as an overloading will mess them up
+- It is critical we guarantee disk space for Cassandra as an overloading will mess them up
 
-# Datastax agents need to be explicitly killed and not stopped as they are poorly written
+- Datastax agents need to be explicitly killed and not stopped as they are poorly written
+
+- Typical usage of the stress test tool:
+
+```sudo cassandra-stress -d cassandra-01.us-east-1.aws.barchart.com,cassandra-02.us-east-1.aws.barchart.com -l 2 -R NetworkTopologyStrategy -O us-east-1:2,us-west-1:2,eqx:2 -t 1024```
