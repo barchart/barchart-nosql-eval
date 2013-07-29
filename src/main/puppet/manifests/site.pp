@@ -43,6 +43,7 @@ default=us-east-1:az1
 # Default setup.
 node default {
 
+	# FIXME
   limits::fragment {
     "*/soft/nofile":
       value => "1024";
