@@ -17,9 +17,9 @@ service puppet start
 
 ```
 
-# make sure the link to ops center is correct (i.e host machine of opscenter)
+- make sure the link to ops center is correct (i.e host machine of opscenter)
 
-# in extreme cases it may be necessary to purge OpsCenter keyspace on Cassandra as it replicates the environment
+- in extreme cases it may be necessary to purge OpsCenter keyspace on Cassandra as it replicates the environment
 
 Helpful directories:
 
