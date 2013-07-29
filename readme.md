@@ -32,3 +32,5 @@ On opscenter machine:
 barchart-nosql-eval: contains puppet configuration for everything we need starting with
 
 /main/java/puppet/files/site.pp
+
+# It is critical we guarantee disk space for Cassandra as an overloading will mess them up
