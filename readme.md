@@ -34,3 +34,5 @@ barchart-nosql-eval: contains puppet configuration for everything we need starti
 /main/java/puppet/files/site.pp
 
 # It is critical we guarantee disk space for Cassandra as an overloading will mess them up
+
+# Datastax agents need to be explicitly killed and not stopped as they are poorly written
