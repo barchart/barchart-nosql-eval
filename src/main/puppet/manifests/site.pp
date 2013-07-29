@@ -46,9 +46,9 @@ node default {
 	# FIXME
   limits::fragment {
     "*/soft/nofile":
-      value => "1024";
+      value => "99999";
     "*/hard/nofile":
-      value => "8192";
+      value => "99999";
   }
     
   # Require time sync.
