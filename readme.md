@@ -39,5 +39,4 @@ barchart-nosql-eval: contains puppet configuration for everything we need starti
 
 - Typical usage of the stress test tool:
 
-```sudo cassandra-stress -d cassandra-01.us-east-1.aws.barchart.com,cassandra-02.us-east-1.aws.barchart.com
-      -l 2 -R NetworkTopologyStrategy -O us-east-1:2,us-west-1:2,eqx:2 -t 1024```
+`sudo cassandra-stress -d cassandra-01.us-east-1.aws.barchart.com,cassandra-02.us-east-1.aws.barchart.com -l 2 -R NetworkTopologyStrategy -O us-east-1:2,us-west-1:2,eqx:2 -t 1024`
